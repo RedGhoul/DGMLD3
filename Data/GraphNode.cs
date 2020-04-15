@@ -7,6 +7,7 @@ namespace DGMLD3.Data
 {
     public class GraphNode
     {
+        public string color { get; set; }
         public string group { get; set; }
         public string id { get; set; }
         public string name { get; set; }

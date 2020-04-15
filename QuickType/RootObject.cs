@@ -371,8 +371,10 @@ namespace DGMLD3.QuickType
                     return Id.Schema;
                 case "Table":
                     return Id.Table;
+                default:
+                    return Id.Database;
             }
-            throw new Exception("Cannot unmarshal type Id");
+            //throw new Exception("Cannot unmarshal type Id");
         }
 
         public override void WriteJson(JsonWriter writer, object untypedValue, JsonSerializer serializer)
@@ -415,8 +417,11 @@ namespace DGMLD3.QuickType
                 case Id.Table:
                     serializer.Serialize(writer, "Table");
                     return;
+                default:
+                    serializer.Serialize(writer, "Table");
+                    return;
             }
-            throw new Exception("Cannot marshal type Id");
+            //throw new Exception("Cannot marshal type Id");
         }
 
         public static readonly IdConverter Singleton = new IdConverter();
@@ -436,8 +441,10 @@ namespace DGMLD3.QuickType
                     return Label.Contains;
                 case "Foreign Key":
                     return Label.ForeignKey;
+                default:
+                    return Label.ForeignKey;
             }
-            throw new Exception("Cannot unmarshal type Label");
+            //throw new Exception("Cannot unmarshal type Label");
         }
 
         public override void WriteJson(JsonWriter writer, object untypedValue, JsonSerializer serializer)
@@ -456,8 +463,11 @@ namespace DGMLD3.QuickType
                 case Label.ForeignKey:
                     serializer.Serialize(writer, "Foreign Key");
                     return;
+                default:
+                    serializer.Serialize(writer, "Foreign Key");
+                    return;
             }
-            throw new Exception("Cannot marshal type Label");
+            //throw new Exception("Cannot marshal type Label");
         }
 
         public static readonly LabelConverter Singleton = new LabelConverter();
@@ -567,8 +577,10 @@ namespace DGMLD3.QuickType
                     return Description.Nvarchar6;
                 case "uniqueidentifier":
                     return Description.Uniqueidentifier;
+                default:
+                    return Description.Uniqueidentifier;
             }
-            throw new Exception("Cannot unmarshal type Description");
+            //throw new Exception("Cannot unmarshal type Description");
         }
 
         public override void WriteJson(JsonWriter writer, object untypedValue, JsonSerializer serializer)
@@ -723,7 +735,7 @@ namespace DGMLD3.QuickType
                     serializer.Serialize(writer, "uniqueidentifier");
                     return;
             }
-            throw new Exception("Cannot marshal type Description");
+            //throw new Exception("Cannot marshal type Description");
         }
 
         public static readonly DescriptionConverter Singleton = new DescriptionConverter();
@@ -743,8 +755,10 @@ namespace DGMLD3.QuickType
                     return ErrorMessage.NodeIdHasAHubValueOf0;
                 case "Node 'Id' has a hub value of 1.":
                     return ErrorMessage.NodeIdHasAHubValueOf1;
+                default:
+                    return ErrorMessage.NodeIdHasAHubValueOf1;
             }
-            throw new Exception("Cannot unmarshal type ErrorMessage");
+            //throw new Exception("Cannot unmarshal type ErrorMessage");
         }
 
         public override void WriteJson(JsonWriter writer, object untypedValue, JsonSerializer serializer)
@@ -763,8 +777,11 @@ namespace DGMLD3.QuickType
                 case ErrorMessage.NodeIdHasAHubValueOf1:
                     serializer.Serialize(writer, "Node 'Id' has a hub value of 1.");
                     return;
+                default:
+                    serializer.Serialize(writer, "Node 'Id' has a hub value of 1.");
+                    return;
             }
-            throw new Exception("Cannot marshal type ErrorMessage");
+            //throw new Exception("Cannot marshal type ErrorMessage");
         }
 
         public static readonly ErrorMessageConverter Singleton = new ErrorMessageConverter();
@@ -784,8 +801,10 @@ namespace DGMLD3.QuickType
                     return Group.Collapsed;
                 case "Expanded":
                     return Group.Expanded;
+                default:
+                    return Group.Expanded;
             }
-            throw new Exception("Cannot unmarshal type Group");
+            //throw new Exception("Cannot unmarshal type Group");
         }
 
         public override void WriteJson(JsonWriter writer, object untypedValue, JsonSerializer serializer)
@@ -804,8 +823,11 @@ namespace DGMLD3.QuickType
                 case Group.Expanded:
                     serializer.Serialize(writer, "Expanded");
                     return;
+                default:
+                    serializer.Serialize(writer, "Expanded");
+                    return;
             }
-            throw new Exception("Cannot marshal type Group");
+            //throw new Exception("Cannot marshal type Group");
         }
 
         public static readonly GroupConverter Singleton = new GroupConverter();
@@ -842,7 +864,7 @@ namespace DGMLD3.QuickType
                 serializer.Serialize(writer, value.SetterElement);
                 return;
             }
-            throw new Exception("Cannot marshal type SetterUnion");
+            //throw new Exception("Cannot marshal type SetterUnion");
         }
 
         public static readonly SetterUnionConverter Singleton = new SetterUnionConverter();
@@ -863,6 +885,8 @@ namespace DGMLD3.QuickType
                 case "Stroke":
                     return PropertyEnum.Stroke;
                 case "StrokeThickness":
+                    return PropertyEnum.StrokeThickness;
+                default:
                     return PropertyEnum.StrokeThickness;
             }
             throw new Exception("Cannot unmarshal type PropertyEnum");
@@ -888,7 +912,7 @@ namespace DGMLD3.QuickType
                     serializer.Serialize(writer, "StrokeThickness");
                     return;
             }
-            throw new Exception("Cannot marshal type PropertyEnum");
+            //throw new Exception("Cannot marshal type PropertyEnum");
         }
 
         public static readonly PropertyEnumConverter Singleton = new PropertyEnumConverter();
