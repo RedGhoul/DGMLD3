@@ -12,5 +12,15 @@ namespace DGMLD3.Data
             : base(options)
         {
         }
+
+        public DbSet<Graph> Graphs { get; set; }
+
+        protected override void OnModelCreating(ModelBuilder builder)
+        {
+            base.OnModelCreating(builder);
+            builder.Entity<Graph>()
+            .HasIndex(u => u.Name)
+            .IsUnique();
+        }
     }
 }
