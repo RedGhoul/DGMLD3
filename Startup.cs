@@ -39,6 +39,8 @@ namespace DGMLD3
             });
             services.AddControllersWithViews();
             services.AddRazorPages().AddRazorRuntimeCompilation();
+            services.AddResponseCaching();
+            services.AddResponseCompression();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -62,7 +64,8 @@ namespace DGMLD3
 
             app.UseAuthentication();
             app.UseAuthorization();
-
+            app.UseResponseCaching();
+            app.UseResponseCompression();
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllerRoute(
