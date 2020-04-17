@@ -91,6 +91,7 @@ namespace DGMLD3.Controllers
         }
 
         [HttpGet]
+        [ResponseCache(Duration = 30)]
         public IActionResult ViewNetwork([FromQuery]string graphName)
         {
             string cacheKeyLink = "GRAPH_LINKS" + graphName;
@@ -101,11 +102,8 @@ namespace DGMLD3.Controllers
 
             if(!string.IsNullOrEmpty(Links) && !string.IsNullOrEmpty(Nodes))
             {
-                List<GraphLink> graphLinks = JsonConvert.DeserializeObject<List<GraphLink>>(Links);
-                List<GraphNode> graphNodes = JsonConvert.DeserializeObject<List<GraphNode>>(Nodes);
-
-                ViewBag.NODES = JsonConvert.SerializeObject(graphNodes);
-                ViewBag.LINKS = JsonConvert.SerializeObject(graphLinks);
+                ViewBag.NODES = Nodes;
+                ViewBag.LINKS = Links;
 
                 ViewBag.LINK_URL = "https://" + Request.Host.Value + "/DGML/ViewNetwork?graphName=" + graphName;
             }
