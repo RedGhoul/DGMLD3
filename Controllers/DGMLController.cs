@@ -41,52 +41,54 @@ namespace DGMLD3.Controllers
         public async Task<IActionResult> Upload(UploadViewModel model)
         {
             var fileName = Path.GetFileName(model.file.FileName);
-            using (var uploadedFile = model.file.OpenReadStream())
-            {
-                //uploadedFile.CopyTo(localFile);
-                List<GraphNode> nodes;
-                List<GraphLink> links;
-                GenerateD3Network(uploadedFile, out nodes, out links, model.DGML_Type_ID);
-                Graph newGraph = new Graph();
-                newGraph.Name = Guid.NewGuid().ToString();
-                newGraph.Nodes = new List<Data.Node>();
-                newGraph.Links = new List<Data.Link>();
-                foreach (var item in nodes)
+            if(Path.GetExtension(fileName).Equals(".dgml")){
+                using (var uploadedFile = model.file.OpenReadStream())
                 {
-                    newGraph.Nodes.Add(new Data.Node
+                    List<GraphNode> nodes;
+                    List<GraphLink> links;
+                    GenerateD3Network(uploadedFile, out nodes, out links, model.DGML_Type_ID);
+                    Graph newGraph = new Graph();
+                    newGraph.Name = Guid.NewGuid().ToString();
+                    newGraph.Nodes = new List<Data.Node>();
+                    newGraph.Links = new List<Data.Link>();
+                    foreach (var item in nodes)
                     {
-                        group = item.group,
-                        name = item.name,
-                        color = item.color,
-                    });
-                }
-                foreach (var item in links)
-                {
-                    newGraph.Links.Add(new Data.Link
+                        newGraph.Nodes.Add(new Data.Node
+                        {
+                            group = item.group,
+                            name = item.name,
+                            color = item.color,
+                        });
+                    }
+                    foreach (var item in links)
                     {
-                        source = item.source,
-                        target = item.target,
-                    });
+                        newGraph.Links.Add(new Data.Link
+                        {
+                            source = item.source,
+                            target = item.target,
+                        });
+                    }
+                    _context.Graphs.Add(newGraph);
+                    await _context.SaveChangesAsync();
+                    string NODES = JsonConvert.SerializeObject(nodes);
+                    string LINKS = JsonConvert.SerializeObject(links);
+                    
+                    ViewBag.NODES = NODES;
+                    ViewBag.LINKS = LINKS;
+                    
+                    var options = new DistributedCacheEntryOptions();
+                    options.SetSlidingExpiration(TimeSpan.FromDays(400));
+                    
+                    string cacheKeyLink = "GRAPH_LINKS" + newGraph.Name;
+                    _distributedCache.SetString(cacheKeyLink, LINKS, options);
+
+                    string cacheKeyNodes = "GRAPH_NODES" + newGraph.Name;
+                    _distributedCache.SetString(cacheKeyNodes, NODES, options);
+
+                    ViewBag.LINK_URL = "https://"+Request.Host.Value + "/DGML/ViewNetwork?graphName=" + newGraph.Name;
                 }
-                _context.Graphs.Add(newGraph);
-                await _context.SaveChangesAsync();
-                string NODES = JsonConvert.SerializeObject(nodes);
-                string LINKS = JsonConvert.SerializeObject(links);
-                
-                ViewBag.NODES = NODES;
-                ViewBag.LINKS = LINKS;
-                
-                var options = new DistributedCacheEntryOptions();
-                options.SetSlidingExpiration(TimeSpan.FromDays(400));
-                
-                string cacheKeyLink = "GRAPH_LINKS" + newGraph.Name;
-                _distributedCache.SetString(cacheKeyLink, LINKS, options);
-
-                string cacheKeyNodes = "GRAPH_NODES" + newGraph.Name;
-                _distributedCache.SetString(cacheKeyNodes, NODES, options);
-
-                ViewBag.LINK_URL = "https://"+Request.Host.Value + "/DGML/ViewNetwork?graphName=" + newGraph.Name;
             }
+            
             return View("Network");
         }
 
