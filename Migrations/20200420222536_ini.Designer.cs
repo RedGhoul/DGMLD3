@@ -10,16 +10,83 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace DGMLD3.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20200416032136_init")]
-    partial class init
+    [Migration("20200420222536_ini")]
+    partial class ini
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn)
+                .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.SerialColumn)
                 .HasAnnotation("ProductVersion", "3.1.3")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
+
+            modelBuilder.Entity("DGMLD3.Data.Graph", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.SerialColumn);
+
+                    b.Property<string>("Name")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Name")
+                        .IsUnique();
+
+                    b.ToTable("Graphs");
+                });
+
+            modelBuilder.Entity("DGMLD3.Data.Link", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.SerialColumn);
+
+                    b.Property<int>("GraphId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("source")
+                        .HasColumnType("text");
+
+                    b.Property<string>("target")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("GraphId");
+
+                    b.ToTable("Link");
+                });
+
+            modelBuilder.Entity("DGMLD3.Data.Node", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.SerialColumn);
+
+                    b.Property<int>("GraphId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("color")
+                        .HasColumnType("text");
+
+                    b.Property<string>("group")
+                        .HasColumnType("text");
+
+                    b.Property<string>("name")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("GraphId");
+
+                    b.ToTable("Node");
+                });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
                 {
@@ -52,7 +119,7 @@ namespace DGMLD3.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer")
-                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.SerialColumn);
 
                     b.Property<string>("ClaimType")
                         .HasColumnType("text");
@@ -140,7 +207,7 @@ namespace DGMLD3.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer")
-                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.SerialColumn);
 
                     b.Property<string>("ClaimType")
                         .HasColumnType("text");
@@ -217,6 +284,24 @@ namespace DGMLD3.Migrations
                     b.HasKey("UserId", "LoginProvider", "Name");
 
                     b.ToTable("AspNetUserTokens");
+                });
+
+            modelBuilder.Entity("DGMLD3.Data.Link", b =>
+                {
+                    b.HasOne("DGMLD3.Data.Graph", "Graph")
+                        .WithMany("Links")
+                        .HasForeignKey("GraphId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("DGMLD3.Data.Node", b =>
+                {
+                    b.HasOne("DGMLD3.Data.Graph", "Graph")
+                        .WithMany("Nodes")
+                        .HasForeignKey("GraphId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>

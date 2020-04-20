@@ -99,13 +99,11 @@ namespace DGMLD3.Controllers
 
             string cacheKeyNodes = "GRAPH_NODES" + graphName;
             string Nodes = _distributedCache.GetString(cacheKeyNodes);
-
-            if(!string.IsNullOrEmpty(Links) && !string.IsNullOrEmpty(Nodes))
+            ViewBag.LINK_URL = "https://" + Request.Host.Value + "/DGML/ViewNetwork?graphName=" + graphName;
+            if (!string.IsNullOrEmpty(Links) && !string.IsNullOrEmpty(Nodes))
             {
                 ViewBag.NODES = Nodes;
                 ViewBag.LINKS = Links;
-
-                ViewBag.LINK_URL = "https://" + Request.Host.Value + "/DGML/ViewNetwork?graphName=" + graphName;
             }
             else
             {

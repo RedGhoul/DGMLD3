@@ -29,7 +29,7 @@ namespace DGMLD3
         {
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseNpgsql(
-                    Configuration.GetConnectionString("DefaultConnection")));
+                    Configuration.GetConnectionString("DefaultConnection"), options => options.SetPostgresVersion(9,6)));
             services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
                 .AddEntityFrameworkStores<ApplicationDbContext>();
 
