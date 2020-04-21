@@ -19,7 +19,11 @@ namespace DGMLD3.Services
         {
             var options = new DistributedCacheEntryOptions();
             options.SetSlidingExpiration(TimeSpan.FromDays(400));
-            string GRAPH = JsonConvert.SerializeObject(newGraph);
+            (List<GraphNode> nodes, List<GraphLink> links) = GraphMapperService.MapGraphToDTOs(newGraph);
+            GraphDto graphDto = new GraphDto();
+            graphDto.Links = links;
+            graphDto.Nodes = nodes;
+            string GRAPH = JsonConvert.SerializeObject(graphDto);
             string cacheGraphKey = "GRAPH_" + newGraph.Name;
             await _distributedCache.SetStringAsync(cacheGraphKey, GRAPH, options);
         }
@@ -28,7 +32,7 @@ namespace DGMLD3.Services
         {
             string cacheKeyLink = "GRAPH_" + graphName;
             string GRAPH = await _distributedCache.GetStringAsync(cacheKeyLink);
-            Graph graph = JsonConvert.DeserializeObject<Graph>(GRAPH);
+            GraphDto graph = JsonConvert.DeserializeObject<GraphDto>(GRAPH);
             return (JsonConvert.SerializeObject(graph.Links),JsonConvert.SerializeObject(graph.Nodes));
         }
     }

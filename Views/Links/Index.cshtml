@@ -1,21 +1,32 @@
-﻿@model PaginatedList<DGMLD3.Data.Graph>
+﻿@model PaginatedList<DGMLD3.Data.Link>
 
 
-<h1>Your Graphs</h1>
 
+@{ 
+    var PlaceHolderValue = "";
+    if (string.IsNullOrEmpty((string)ViewBag.PlaceHolderSearch))
+    {
+        PlaceHolderValue = "Enter your search";
+    }
+    else
+    {
+        PlaceHolderValue = ViewBag.PlaceHolderSearch;
+    }
+
+}
+<h3>Links for Graph: @ViewBag.GraphName</h3>
 <p>
     <a class="btn btn-primary" asp-action="Create">Create New</a>
 </p>
-<form asp-action="Index" method="get">
+<form asp-action="Index"  asp-route-currentGraphId="@ViewData["CurrentGraphId"]" method="post">
     <div class="form-actions no-color">
         <div class="form-group">
             <label for="SearchString">Search:</label>
-
-            <input type="text" name="SearchString" class="form-control" value="@ViewData["SearchFilter"]" />
+            <input type="text" name="SearchString" class="form-control" value="@ViewData["SearchFilter"]" placeholder="@PlaceHolderValue"/>
         </div>
         <p>
             <input type="submit" value="Search" class="btn btn-primary" /> |
-            <a class="btn btn-primary" asp-action="Index">Back to Full List</a>
+            <a class="btn btn-primary" asp-action="Index" asp-route-currentGraphId="@ViewData["CurrentGraphId"]">Back to Full List</a>
         </p>
     </div>
 </form>
@@ -23,13 +34,10 @@
     <thead>
         <tr>
             <th>
-                <a asp-action="Index" asp-route-sortOrder="@ViewData["NameSortParm"]">Graph Identifier</a>
+                <a asp-action="Index" asp-route-sortOrder="@ViewData["TargetSortParm"]" asp-route-currentGraphId="@ViewData["CurrentGraphId"]">Target</a>
             </th>
             <th>
-                <a asp-action="Index" asp-route-sortOrder="@ViewData["GraphNameSortParm"]">Name</a>
-            </th>
-            <th>
-                <a asp-action="Index" asp-route-sortOrder="@ViewData["DateSortParm"]">Date Created</a>
+                <a asp-action="Index" asp-route-sortOrder="@ViewData["SourceSortParm"]" asp-route-currentGraphId="@ViewData["CurrentGraphId"]">Source</a>
             </th>
             <th>Actions</th>
         </tr>
@@ -39,16 +47,12 @@
         {
             <tr>
                 <td>
-                    @Html.DisplayFor(modelItem => item.Name)
+                    @Html.DisplayFor(modelItem => item.target)
                 </td>
                 <th>
-                    @Html.DisplayFor(modelItem => item.ReadableName)
-                </th>
-                <th>
-                    @Html.DisplayFor(modelItem => item.DateCreated)
+                    @Html.DisplayFor(modelItem => item.source)
                 </th>
                 <td>
-                    <a asp-controller="Links" asp-action="Index" asp-route-currentGraphId="@item.Id">View Links</a> |
                     <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
                     <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
                     <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
@@ -67,6 +71,7 @@
    asp-route-sortOrder="@ViewData["CurrentSort"]"
    asp-route-pageNumber="@(Model.PageIndex - 1)"
    asp-route-currentFilter="@ViewData["CurrentFilter"]"
+   asp-route-currentGraphId="@ViewData["CurrentGraphId"]"
    class="btn btn-primary @prevDisabled">
     Previous
 </a>
@@ -74,6 +79,8 @@
    asp-route-sortOrder="@ViewData["CurrentSort"]"
    asp-route-pageNumber="@(Model.PageIndex + 1)"
    asp-route-currentFilter="@ViewData["CurrentFilter"]"
+   asp-route-currentGraphId="@ViewData["CurrentGraphId"]"
    class="btn btn-primary @nextDisabled">
     Next
 </a>
+

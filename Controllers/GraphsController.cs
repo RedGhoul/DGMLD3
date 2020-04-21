@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using DGMLD3.Data;
 using Microsoft.AspNetCore.Authorization;
+using DGMLD3.Models;
 
 namespace DGMLD3.Controllers
 {
@@ -21,9 +22,57 @@ namespace DGMLD3.Controllers
         }
 
         // GET: Graphs
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string sortOrder, string currentFilter, string searchString, int? pageNumber)
         {
-            return View(await _context.Graphs.ToListAsync());
+            ViewData["NameSortParm"] = String.IsNullOrEmpty(sortOrder) ? "name_desc" : "name_asc";
+            ViewData["GraphNameSortParm"] = String.IsNullOrEmpty(sortOrder) ? "g_name_desc" : "g_name_asc";
+            ViewData["DateSortParm"] = String.IsNullOrEmpty(sortOrder) ? "date_desc" : "date_asc";
+            
+            if (searchString != null)
+            {
+                pageNumber = 1;
+            }
+            else
+            {
+                searchString = currentFilter;
+            }
+
+            ViewData["SearchFilter"] = searchString;
+
+            var graphs = from s in _context.Graphs select s;
+
+            if (!String.IsNullOrEmpty(searchString))
+            {
+                graphs = graphs.Where(s => s.Name.Contains(searchString)
+                                       || s.ReadableName.Contains(searchString));
+            }
+
+            switch (sortOrder)
+            {
+                case "name_desc":
+                    graphs = graphs.OrderByDescending(s => s.Name);
+                    break;
+                case "name_asc":
+                    graphs = graphs.OrderBy(s => s.Name);
+                    break;
+                case "g_name_desc":
+                    graphs = graphs.OrderByDescending(s => s.ReadableName);
+                    break;
+                case "g_name_asc":
+                    graphs = graphs.OrderBy(s => s.ReadableName);
+                    break;
+                case "date_desc":
+                    graphs = graphs.OrderByDescending(s => s.DateCreated);
+                    break;
+                case "date_asc":
+                    graphs = graphs.OrderByDescending(s => s.DateCreated);
+                    break;
+                default:
+                    graphs = graphs.OrderBy(s => s.Name);
+                    break;
+            }
+            int pageSize = 10;
+            return View(await PaginatedList<Graph>.CreateAsync(graphs.AsNoTracking(), pageNumber ?? 1, pageSize));
         }
 
         // GET: Graphs/Details/5

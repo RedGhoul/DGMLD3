@@ -128,6 +128,7 @@ namespace DGMLD3.Services
             {
                 nodes.Add(new GraphNode
                 {
+                    id = item.name,
                     group = item.group,
                     name = item.name,
                     color = item.color,

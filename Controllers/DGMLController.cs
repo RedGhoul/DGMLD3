@@ -48,7 +48,7 @@ namespace DGMLD3.Controllers
                         _context.Graphs.Add(newGraph);
                         await _context.SaveChangesAsync();
 
-                        string NODES = JsonConvert.SerializeObject(newGraph);
+                        string NODES = JsonConvert.SerializeObject(nodes);
                         string LINKS = JsonConvert.SerializeObject(links);
 
                         ViewBag.NODES = NODES;
@@ -62,14 +62,14 @@ namespace DGMLD3.Controllers
                 catch (Exception e)
                 {
                     model.ErrorMsg = "Could not read file";
-                    return View("Upload");
+                    return View("Upload", model);
                 }
                
             }
             else
             {
                 model.ErrorMsg = "Please Enter a valid .dgml";
-                return View("Upload");
+                return View("Upload", model);
             }
             
             return View("Network");
