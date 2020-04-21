@@ -12,6 +12,8 @@ using DGMLD3.Data;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using DGMLD3.Services;
+using System.Security.Claims;
 
 namespace DGMLD3
 {
@@ -30,17 +32,25 @@ namespace DGMLD3
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseNpgsql(
                     Configuration.GetConnectionString("DefaultConnection"), options => options.SetPostgresVersion(9,6)));
-            services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
+            
+            services.AddIdentity<ApplicationUser, IdentityRole>(options => options.SignIn.RequireConfirmedAccount = true)
+                .AddDefaultTokenProviders()
+                .AddDefaultUI()
                 .AddEntityFrameworkStores<ApplicationDbContext>();
 
             services.AddDistributedRedisCache(options =>
             {
                 options.Configuration = Configuration.GetSection("RedisCacheOptions")["ConnectionString"];
             });
+
+            services.AddSingleton<GraphRedisService, GraphRedisService>();
+
             services.AddControllersWithViews();
             services.AddRazorPages().AddRazorRuntimeCompilation();
             services.AddResponseCaching();
             services.AddResponseCompression();
+            services.AddTransient<UserManager<ApplicationUser>>();
+            services.AddTransient<RoleManager<IdentityRole>>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -73,6 +83,56 @@ namespace DGMLD3
                     pattern: "{controller=Home}/{action=Index}/{id?}");
                 endpoints.MapRazorPages();
             });
+            //await CreateUserRoles(app);
+        }
+
+        private async Task CreateUserRoles(IApplicationBuilder app)
+        {
+            using (IServiceScope scope = app.ApplicationServices.CreateScope())
+            {
+                var RoleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+                var UserManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
+                //var JobsRepo = scope.ServiceProvider.GetRequiredService<IJobPostingRepository>();
+                //await JobsRepo.BuildCache();
+                var content = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+
+                IdentityResult roleResult;
+
+                //Adding Admin Role
+                var roleCheck = await RoleManager.RoleExistsAsync("Admin");
+                if (!roleCheck)
+                {
+                    //create the roles and seed them to the database
+                    roleResult = await RoleManager.CreateAsync(new IdentityRole("Admin"));
+                }
+
+                //Assign Admin role to the main User here we have given our newly registered 
+                //login id for Admin management
+                // Also Assigning them Claims to perform CUD operations
+                ApplicationUser user = await UserManager.FindByEmailAsync("avaneesab5@gmail.com");
+                if (user != null)
+                {
+                    var currentUserRoles = await UserManager.GetRolesAsync(user);
+                    if (!currentUserRoles.Contains("Admin"))
+                    {
+                        await UserManager.AddToRoleAsync(user, "Admin");
+                    }
+
+                    //var currentClaims = await UserManager.GetClaimsAsync(user);
+                    //if (!currentClaims.Any())
+                    //{
+                    //    var CanCreatePostingClaim = new Claim("CanViewGraphs", "True");
+                    //    await UserManager.AddClaimAsync(user, CanCreatePostingClaim);
+
+                    //    var CanEditPostingClaim = new Claim("CanEditPosting", "True");
+                    //    await UserManager.AddClaimAsync(user, CanEditPostingClaim);
+
+                    //    var CanDeletePostingClaim = new Claim("CanDeletePosting", "True");
+                    //    await UserManager.AddClaimAsync(user, CanDeletePostingClaim);
+                    //}
+                }
+            }
+
         }
     }
 }
