@@ -6,9 +6,11 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using DGMLD3.Data;
+using Microsoft.AspNetCore.Authorization;
 
 namespace DGMLD3.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class GraphsController : Controller
     {
         private readonly ApplicationDbContext _context;
