@@ -14,6 +14,9 @@ namespace DGMLD3.Data
         }
 
         public DbSet<Graph> Graphs { get; set; }
+        public DbSet<Node> Nodes { get; set; }
+        public DbSet<Link> Links { get; set; }
+        public DbSet<Pricing> Prices{ get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {

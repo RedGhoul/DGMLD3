@@ -37,7 +37,7 @@ namespace DGMLD3.Controllers
         }
 
 
-        [HttpPost]
+        [HttpPost] 
         public async Task<IActionResult> Upload(UploadViewModel model)
         {
             var fileName = Path.GetFileName(model.file.FileName);
