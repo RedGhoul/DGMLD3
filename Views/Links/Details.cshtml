@@ -1,0 +1,36 @@
+﻿@model DGMLD3.Data.Link
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h1>Details</h1>
+
+<div>
+    <h4>Link</h4>
+    <hr />
+    <dl class="row">
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.source)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.source)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.target)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.target)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Graph)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Graph.Id)
+        </dd>
+    </dl>
+</div>
+<div>
+    <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> |
+    <a asp-action="Index">Back to List</a>
+</div>

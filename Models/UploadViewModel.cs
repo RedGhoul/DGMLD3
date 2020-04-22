@@ -12,5 +12,15 @@ namespace DGMLD3.Models
         public IFormFile file { get; set; }
         public string DGML_Type_ID { get; set; }
         public IEnumerable<SelectListItem> DGML_Types { get; set; }
+        public string ErrorMsg { get; set; }
+
+        public UploadViewModel()
+        {
+            this.DGML_Types = new List<SelectListItem>()
+            {
+                new SelectListItem("CODE-MAP","CODE"),
+                new SelectListItem("DB-MAP","DB")
+            };
+        }
     }
 }

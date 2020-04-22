@@ -6,9 +6,11 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using DGMLD3.Data;
+using Microsoft.AspNetCore.Authorization;
 
 namespace DGMLD3.Controllers
 {
+    [Authorize(Roles ="Admin")]
     public class PricingController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -33,7 +35,7 @@ namespace DGMLD3.Controllers
             }
 
             var pricing = await _context.Prices
-                .FirstOrDefaultAsync(m => m.id == id);
+                .FirstOrDefaultAsync(m => m.Id == id);
             if (pricing == null)
             {
                 return NotFound();
@@ -53,7 +55,7 @@ namespace DGMLD3.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("id,planName,price,active")] Pricing pricing)
+        public async Task<IActionResult> Create([Bind("Name,ChargeAmount,BillingPer,IsActive")] Price pricing)
         {
             if (ModelState.IsValid)
             {
@@ -85,9 +87,9 @@ namespace DGMLD3.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("id,planName,price,active")] Pricing pricing)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,ChargeAmount,BillingPer,IsActive")] Price pricing)
         {
-            if (id != pricing.id)
+            if (id != pricing.Id)
             {
                 return NotFound();
             }
@@ -101,7 +103,7 @@ namespace DGMLD3.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!PricingExists(pricing.id))
+                    if (!PricingExists(pricing.Id))
                     {
                         return NotFound();
                     }
@@ -124,7 +126,7 @@ namespace DGMLD3.Controllers
             }
 
             var pricing = await _context.Prices
-                .FirstOrDefaultAsync(m => m.id == id);
+                .FirstOrDefaultAsync(m => m.Id == id);
             if (pricing == null)
             {
                 return NotFound();
@@ -146,7 +148,7 @@ namespace DGMLD3.Controllers
 
         private bool PricingExists(int id)
         {
-            return _context.Prices.Any(e => e.id == id);
+            return _context.Prices.Any(e => e.Id == id);
         }
     }
 }
