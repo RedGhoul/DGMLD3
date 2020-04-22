@@ -1,4 +1,4 @@
-﻿@model DGMLD3.Data.Pricing
+﻿@model DGMLD3.Data.Price
 
 @{
     ViewData["Title"] = "Create";
@@ -13,18 +13,23 @@
         <form asp-action="Create">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
-                <label asp-for="planName" class="control-label"></label>
-                <input asp-for="planName" class="form-control" />
-                <span asp-validation-for="planName" class="text-danger"></span>
+                <label asp-for="Name" class="control-label"></label>
+                <input asp-for="Name" class="form-control" />
+                <span asp-validation-for="Name" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="price" class="control-label"></label>
-                <input asp-for="price" class="form-control" />
-                <span asp-validation-for="price" class="text-danger"></span>
+                <label asp-for="ChargeAmount" class="control-label"></label>
+                <input asp-for="ChargeAmount" class="form-control" />
+                <span asp-validation-for="ChargeAmount" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="BillingPer" class="control-label"></label>
+                <input asp-for="BillingPer" class="form-control" />
+                <span asp-validation-for="BillingPer" class="text-danger"></span>
             </div>
             <div class="form-group form-check">
                 <label class="form-check-label">
-                    <input class="form-check-input" asp-for="active" /> @Html.DisplayNameFor(model => model.active)
+                    <input class="form-check-input" asp-for="IsActive" /> @Html.DisplayNameFor(model => model.IsActive)
                 </label>
             </div>
             <div class="form-group">
