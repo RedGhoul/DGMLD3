@@ -59,8 +59,9 @@ html {
 }
 
 body {
-  /* Margin bottom by footer height */
-  margin-bottom: 60px;
+    /* Margin bottom by footer height */
+    background: azure;
+    margin-bottom: 60px;
 }
 .footer {
   position: absolute;
@@ -73,10 +74,6 @@ body {
 :root {
     --input-padding-x: 1.5rem;
     --input-padding-y: .75rem;
-}
-
-body {
-    background: #4e7a96;
 }
 
 /*Login & Register Page*/

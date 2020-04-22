@@ -21,6 +21,7 @@ namespace DGMLD3.Controllers
         }
 
         // GET: Pricing
+        [AllowAnonymous]
         public async Task<IActionResult> Index()
         {
             return View(await _context.Prices.ToListAsync());
@@ -51,11 +52,9 @@ namespace DGMLD3.Controllers
         }
 
         // POST: Pricing/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
-        // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Name,ChargeAmount,BillingPer,IsActive")] Price pricing)
+        public async Task<IActionResult> Create([Bind("Name,ChargeAmount,Features,BillingPer,IsActive")] Price pricing)
         {
             if (ModelState.IsValid)
             {
@@ -87,7 +86,7 @@ namespace DGMLD3.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,ChargeAmount,BillingPer,IsActive")] Price pricing)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,ChargeAmount,Features,BillingPer,IsActive")] Price pricing)
         {
             if (id != pricing.Id)
             {

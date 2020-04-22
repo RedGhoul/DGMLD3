@@ -8,7 +8,7 @@ namespace DGMLD3.Data
     public class Node
     {
         public int Id { get; set; }
-
+        public string NodeId { get; set; }
         public string group { get; set; }
         public string name { get; set; }
         public string color { get; set; }

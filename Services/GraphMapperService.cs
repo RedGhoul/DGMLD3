@@ -1,5 +1,7 @@
 ﻿using DGMLD3.Data;
 using DGMLD3.QuickType;
+using DGMLD3.QuickType.CodeMapConversion;
+using DGMLD3.QuickType.DBMapConversion;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -7,79 +9,93 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Xml;
+using Category1 = DGMLD3.QuickType.CodeMapConversion.Category;
 
 namespace DGMLD3.Services
 {
     public static class GraphMapperService
     {
-        public static (List<GraphNode>, List<GraphLink>) GenerateD3NetworkDBSchema(Stream file, string DGML_Type_ID)
+        public static (List<GraphNode>, List<GraphLink>) GenerateD3Network(Stream file, string DGML_Type_ID)
         {
             XmlDocument doc = new XmlDocument();
             doc.Load(file);
             string json = JsonConvert.SerializeXmlNode(doc);
-            RootObject sss = RootObject.FromJson(json);
             List<GraphNode> nodes = new List<GraphNode>();
             List<GraphLink> links = new List<GraphLink>();
-            Dictionary<string, bool> bag = new Dictionary<string, bool>();
-            for (int i = 0; i < sss.DirectedGraph.Nodes.Node.Length; i++)
+            if (DGML_Type_ID.Equals("DB"))
             {
-                if (DGML_Type_ID.Equals("DB"))
+                DbMap CurrentDBMap = DbMap.FromJson(json);
+             
+                for (int i = 0; i < CurrentDBMap.DirectedGraph.Nodes.Node.Length; i++)
                 {
-                    if (sss.DirectedGraph.Nodes.Node[i].Category == Id.Table)
-                    {
-                        nodes.Add(new GraphNode
+                   
+                        if (CurrentDBMap.DirectedGraph.Nodes.Node[i].Category == Id.Table)
                         {
-                            color = "#7a89de",
-                            group = "1",
-                            id = sss.DirectedGraph.Nodes.Node[i].Id,
-                            name = sss.DirectedGraph.Nodes.Node[i].Id
-                        });
-                    }
-                    else if (sss.DirectedGraph.Nodes.Node[i].Category == Id.ForeignKey)
-                    {
-                        nodes.Add(new GraphNode
+                            nodes.Add(new GraphNode
+                            {
+                                color = "#7a89de",
+                                group = "1",
+                                id = CurrentDBMap.DirectedGraph.Nodes.Node[i].Id,
+                                name = CurrentDBMap.DirectedGraph.Nodes.Node[i].Id
+                            });
+                        }
+                        else if (CurrentDBMap.DirectedGraph.Nodes.Node[i].Category == Id.ForeignKey)
                         {
-                            color = "#e3176f",
-                            group = "1",
-                            id = sss.DirectedGraph.Nodes.Node[i].Id,
-                            name = sss.DirectedGraph.Nodes.Node[i].Id
-                        });
-                    }
-                    else
-                    {
-                        nodes.Add(new GraphNode
+                            nodes.Add(new GraphNode
+                            {
+                                color = "#e3176f",
+                                group = "1",
+                                id = CurrentDBMap.DirectedGraph.Nodes.Node[i].Id,
+                                name = CurrentDBMap.DirectedGraph.Nodes.Node[i].Id
+                            });
+                        }
+                        else
                         {
-                            color = "#9f85a6",
-                            group = "1",
-                            id = sss.DirectedGraph.Nodes.Node[i].Id,
-                            name = sss.DirectedGraph.Nodes.Node[i].Id
-                        });
-                    }
+                            nodes.Add(new GraphNode
+                            {
+                                color = "#9f85a6",
+                                group = "1",
+                                id = CurrentDBMap.DirectedGraph.Nodes.Node[i].Id,
+                                name = CurrentDBMap.DirectedGraph.Nodes.Node[i].Id
+                            });
+                        }
                 }
-                else
+                for (int i = 0; i < CurrentDBMap.DirectedGraph.Links.Link.Length; i++)
+                {
+
+                    links.Add(new GraphLink
+                    {
+                        source = CurrentDBMap.DirectedGraph.Links.Link[i].Source,
+                        target = CurrentDBMap.DirectedGraph.Links.Link[i].Target
+                    });
+                }
+            }
+            else if (DGML_Type_ID.Equals("CODE"))
+            {
+                CodeMap CurrentDBMap = CodeMap.FromJson(json);
+                for (int i = 0; i < CurrentDBMap.DirectedGraph.Nodes.Node.Length; i++)
                 {
                     nodes.Add(new GraphNode
                     {
                         color = "#7a89de",
                         group = "1",
-                        id = sss.DirectedGraph.Nodes.Node[i].Id,
-                        name = sss.DirectedGraph.Nodes.Node[i].Id
+                        id = CurrentDBMap.DirectedGraph.Nodes.Node[i].Id,
+                        name = CurrentDBMap.DirectedGraph.Nodes.Node[i].Label
+                    });
+                    
+                }
+                for (int i = 0; i < CurrentDBMap.DirectedGraph.Links.Link.Length; i++)
+                {
+
+                    links.Add(new GraphLink
+                    {
+                        source = CurrentDBMap.DirectedGraph.Links.Link[i].Source,
+                        target = CurrentDBMap.DirectedGraph.Links.Link[i].Target
                     });
                 }
 
-
-
+               
             }
-            for (int i = 0; i < sss.DirectedGraph.Links.Link.Length; i++)
-            {
-
-                links.Add(new GraphLink
-                {
-                    source = sss.DirectedGraph.Links.Link[i].Source,
-                    target = sss.DirectedGraph.Links.Link[i].Target
-                });
-            }
-
             return (nodes, links);
         }
 
@@ -97,6 +113,7 @@ namespace DGMLD3.Services
                     group = item.group,
                     name = item.name,
                     color = item.color,
+                    NodeId = item.id
                 });
             }
             foreach (var item in links)
@@ -128,7 +145,7 @@ namespace DGMLD3.Services
             {
                 nodes.Add(new GraphNode
                 {
-                    id = item.name,
+                    id = item.NodeId,
                     group = item.group,
                     name = item.name,
                     color = item.color,

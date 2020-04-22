@@ -4,12 +4,16 @@
     ViewData["Title"] = "Create";
 }
 
+
+<!-- Theme included stylesheets -->
+<link href="https://cdn.quilljs.com/1.3.4/quill.snow.css" rel="stylesheet">
 <h1>Create</h1>
 
 <h4>Pricing</h4>
 <hr />
 <div class="row">
-    <div class="col-md-4">
+    <div class="col-md-2"></div>
+    <div class="col-md-8">
         <form asp-action="Create">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
@@ -27,6 +31,11 @@
                 <input asp-for="BillingPer" class="form-control" />
                 <span asp-validation-for="BillingPer" class="text-danger"></span>
             </div>
+            <div class="form-group">
+                <input asp-for="Features" class="form-control" hidden />
+                <div id="editor" style="height: 300px;">
+                </div>
+            </div>
             <div class="form-group form-check">
                 <label class="form-check-label">
                     <input class="form-check-input" asp-for="IsActive" /> @Html.DisplayNameFor(model => model.IsActive)
@@ -37,6 +46,7 @@
             </div>
         </form>
     </div>
+    <div class="col-md-2"></div>
 </div>
 
 <div>
@@ -44,5 +54,16 @@
 </div>
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script src="https://cdn.quilljs.com/1.3.4/quill.js"></script>
+    <script>
+        var quill = new Quill('#editor', {
+            theme: 'snow'
+        });
+        quill.on('text-change', function (delta) {
+            var about = document.querySelector('input[name=Features]');
+            about.value = quill.root.innerHTML;
+        });
+
+
+    </script>
 }

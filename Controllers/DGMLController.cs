@@ -42,7 +42,7 @@ namespace DGMLD3.Controllers
                 {
                     using (var uploadedFile = model.file.OpenReadStream())
                     {
-                        (List<GraphNode> nodes, List<GraphLink> links) = GraphMapperService.GenerateD3NetworkDBSchema(uploadedFile, model.DGML_Type_ID);
+                        (List<GraphNode> nodes, List<GraphLink> links) = GraphMapperService.GenerateD3Network(uploadedFile, model.DGML_Type_ID);
 
                         Graph newGraph = GraphMapperService.MapToNewGraphInDB(nodes, links);
                         _context.Graphs.Add(newGraph);
