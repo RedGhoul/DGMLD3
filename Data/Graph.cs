@@ -17,5 +17,6 @@ namespace DGMLD3.Data
         public string Name { get; set; }
         public string ReadableName { get; set; }
         public DateTime DateCreated { get; set; }
+        public string GraphLinkURL { get; set; }
     }
 }

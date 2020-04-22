@@ -45,6 +45,8 @@ namespace DGMLD3.Controllers
                         (List<GraphNode> nodes, List<GraphLink> links) = GraphMapperService.GenerateD3Network(uploadedFile, model.DGML_Type_ID);
 
                         Graph newGraph = GraphMapperService.MapToNewGraphInDB(nodes, links);
+                        string LINK_URL = "https://" + Request.Host.Value + "/DGML/ViewNetwork?graphName=" + newGraph.Name;
+                        newGraph.GraphLinkURL = LINK_URL;
                         _context.Graphs.Add(newGraph);
                         await _context.SaveChangesAsync();
 
@@ -56,7 +58,7 @@ namespace DGMLD3.Controllers
 
                         await _graphRedisService.SaveGraphToCache(newGraph);
 
-                        ViewBag.LINK_URL = "https://" + Request.Host.Value + "/DGML/ViewNetwork?graphName=" + newGraph.Name;
+                        ViewBag.LINK_URL = LINK_URL;
                     }
                 }
                 catch (Exception e)
@@ -80,7 +82,9 @@ namespace DGMLD3.Controllers
         [ResponseCache(Duration = 30)]
         public async Task<IActionResult> ViewNetwork([FromQuery]string graphName)
         {
-            ViewBag.LINK_URL = "https://" + Request.Host.Value + "/DGML/ViewNetwork?graphName=" + graphName;
+            var graph = await _context.Graphs.Where(x => x.Name.Equals(graphName)).FirstOrDefaultAsync();
+          
+            ViewBag.LINK_URL = graph.GraphLinkURL;
 
             var (Links,Nodes) = await _graphRedisService.GetGraphFromCache(graphName);
             if (!string.IsNullOrEmpty(Links) && !string.IsNullOrEmpty(Nodes))
@@ -90,10 +94,10 @@ namespace DGMLD3.Controllers
             }
             else
             {
-                Graph graph = await _context.Graphs.Where(x => x.Name.Equals(graphName)).Include(x => x.Links).
+                Graph fullGraph = await _context.Graphs.Where(x => x.Name.Equals(graphName)).Include(x => x.Links).
                    Include(x => x.Nodes).
                    FirstOrDefaultAsync();
-                (List<GraphNode> nodes, List<GraphLink> links) = GraphMapperService.MapGraphToDTOs(graph);
+                (List<GraphNode> nodes, List<GraphLink> links) = GraphMapperService.MapGraphToDTOs(fullGraph);
                 ViewBag.NODES = JsonConvert.SerializeObject(nodes);
                 ViewBag.LINKS = JsonConvert.SerializeObject(links);
             }
