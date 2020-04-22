@@ -14,6 +14,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using DGMLD3.Services;
 using System.Security.Claims;
+using DGMLD3.Utils;
 
 namespace DGMLD3
 {
@@ -31,7 +32,7 @@ namespace DGMLD3
         {
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseNpgsql(
-                    Configuration.GetConnectionString("DefaultConnection"), options => options.SetPostgresVersion(9,6)));
+                    Secrets.GetConnectionString(Configuration, "DefaultConnectionDB"), options => options.SetPostgresVersion(9,6)));
             
             services.AddIdentity<ApplicationUser, IdentityRole>(options => options.SignIn.RequireConfirmedAccount = true)
                 .AddDefaultTokenProviders()
@@ -40,7 +41,7 @@ namespace DGMLD3
 
             services.AddDistributedRedisCache(options =>
             {
-                options.Configuration = Configuration.GetSection("RedisCacheOptions")["ConnectionString"];
+                options.Configuration = Secrets.GetConnectionString(Configuration, "ConnectionStringRedis");
             });
 
             services.AddSingleton<GraphRedisService, GraphRedisService>();
