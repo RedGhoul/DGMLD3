@@ -1,4 +1,4 @@
-﻿@model IEnumerable<DGMLD3.Data.Price>
+﻿@model IEnumerable<DGMLD3.Data.PricePlan>
 <section class="pricing py-5">
     <div class="container">
         <div class="row">
@@ -14,18 +14,16 @@
                                 <hr>
                                 <ul class="fa-ul">
                                     @Html.Raw(item.Features)
-                                    @*<li><span class="fa-li"><i class="fas fa-check"></i></span>Single User</li>
-                                    <li><span class="fa-li"><i class="fas fa-check"></i></span>5GB Storage</li>
-                                    <li><span class="fa-li"><i class="fas fa-check"></i></span>Unlimited Public Graphs</li>
-                                    @if (!item.Name.Contains("Free"))
-                                    {
-                                        <li class="text-muted"><span class="fa-li"><i class="fas fa-times"></i></span>Unlimited Private Projects</li>
-                                        <li class="text-muted"><span class="fa-li"><i class="fas fa-times"></i></span>Dedicated Phone Support</li>
-                                        <li class="text-muted"><span class="fa-li"><i class="fas fa-times"></i></span>Free Subdomain</li>
-                                        <li class="text-muted"><span class="fa-li"><i class="fas fa-times"></i></span>Monthly Status Reports</li>
-                                    }*@
+                                   
+
                                 </ul>
-                                <a href="#" class="btn btn-block btn-primary text-uppercase">Select</a>
+                                <a asp-area="Identity" asp-page="/Account/Register" class="btn btn-block btn-primary text-uppercase">Select</a>
+                                @if (User.IsInRole("Admin"))
+                                {
+                                    
+                                        <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-block btn-primary text-uppercase">Edit</a>
+                                    
+                                }
                             </div>
                         </div>
                     </div>

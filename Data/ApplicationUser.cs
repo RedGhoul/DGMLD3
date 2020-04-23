@@ -17,5 +17,6 @@ namespace DGMLD3.Data
         public string LastName { get; set; }
         public ICollection<Graph> Graphs { get; set; }
         public DateTime DateCreated { get; set; }
+        public PricePlan Plan { get; set; }
     }
 }

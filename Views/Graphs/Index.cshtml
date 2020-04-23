@@ -50,7 +50,8 @@
                     <a asp-controller="Links" asp-action="Index" asp-route-currentGraphId="@item.Id">View Links</a> |
                     <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
                     <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                    <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                    <a asp-action="Delete" asp-route-id="@item.Id">Delete</a> |
+                    <a target="_blank" rel="noopener noreferrer" href="@item.GraphLinkURL">View Graph</a>
                 </td>
             </tr>
         }
