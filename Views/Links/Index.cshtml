@@ -15,8 +15,10 @@
 
 }
 <h3>Links for Graph: @ViewBag.GraphName</h3>
+
 <p>
-    <a class="btn btn-primary" asp-action="Create">Create New</a>
+    <a class="btn btn-primary" asp-controller="Graphs" asp-action="Index">Back To Graphs</a>
+    <a class="btn btn-primary" target="_blank" rel="noopener noreferrer" href="@ViewBag.GraphURL">View Graph</a>
 </p>
 <form asp-action="Index"  asp-route-currentGraphId="@ViewData["CurrentGraphId"]" method="post">
     <div class="form-actions no-color">

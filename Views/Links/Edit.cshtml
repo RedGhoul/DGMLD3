@@ -1,9 +1,5 @@
 ﻿@model DGMLD3.Data.Link
 
-@{
-    ViewData["Title"] = "Edit";
-}
-
 <h1>Edit</h1>
 
 <h4>Link</h4>
@@ -36,7 +32,7 @@
 </div>
 
 <div>
-    <a asp-action="Index">Back to List</a>
+    <a asp-action="Index" asp-route-currentGraphId="@ViewBag.currentGraphId">Back to List</a>
 </div>
 
 @section Scripts {

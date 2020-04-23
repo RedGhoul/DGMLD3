@@ -31,6 +31,7 @@ namespace DGMLD3.Controllers
 
             var graph = await _context.Graphs.Where(x => x.Id == Int32.Parse(currentGraphId)).FirstOrDefaultAsync();
             ViewBag.GraphName = graph.Name;
+            ViewBag.GraphURL = graph.GraphLinkURL;
             ViewData["CurrentGraphId"] = currentGraphId;
             ViewData["TargetSortParm"] = String.IsNullOrEmpty(sortOrder) ? "target_desc" : "target_asc";
             ViewData["SourceSortParm"] = String.IsNullOrEmpty(sortOrder) ? "source_desc" : "source_asc";
@@ -83,6 +84,7 @@ namespace DGMLD3.Controllers
 
             var graph = await _context.Graphs.Where(x => x.Id == Int32.Parse(currentGraphId)).FirstOrDefaultAsync();
             ViewBag.GraphName = graph.Name;
+            ViewBag.GraphURL = graph.GraphLinkURL;
 
             ViewData["CurrentGraphId"] = currentGraphId;
             var links = from s in _context.Links where s.GraphId == Int32.Parse(currentGraphId) select s;
@@ -114,31 +116,7 @@ namespace DGMLD3.Controllers
             {
                 return NotFound();
             }
-
-            return View(link);
-        }
-
-        // GET: Links/Create
-        public IActionResult Create()
-        {
-            ViewData["GraphId"] = new SelectList(_context.Graphs, "Id", "Id");
-            return View();
-        }
-
-        // POST: Links/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
-        // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,source,target,GraphId")] Link link)
-        {
-            if (ModelState.IsValid)
-            {
-                _context.Add(link);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
-            }
-            ViewData["GraphId"] = new SelectList(_context.Graphs, "Id", "Id", link.GraphId);
+            ViewBag.currentGraphId = link.GraphId;
             return View(link);
         }
 
@@ -156,6 +134,7 @@ namespace DGMLD3.Controllers
                 return NotFound();
             }
             ViewData["GraphId"] = new SelectList(_context.Graphs, "Id", "Id", link.GraphId);
+            ViewBag.currentGraphId = link.GraphId;
             return View(link);
         }
 
@@ -210,7 +189,7 @@ namespace DGMLD3.Controllers
             {
                 return NotFound();
             }
-
+            ViewBag.currentGraphId = link.GraphId;
             return View(link);
         }
 

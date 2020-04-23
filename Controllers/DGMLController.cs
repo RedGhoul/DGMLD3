@@ -45,6 +45,7 @@ namespace DGMLD3.Controllers
                         (List<GraphNode> nodes, List<GraphLink> links) = GraphMapperService.GenerateD3Network(uploadedFile, model.DGML_Type_ID);
 
                         Graph newGraph = GraphMapperService.MapToNewGraphInDB(nodes, links);
+                        newGraph.ReadableName = model.GraphName;
                         string LINK_URL = "https://" + Request.Host.Value + "/DGML/ViewNetwork?graphName=" + newGraph.Name;
                         newGraph.GraphLinkURL = LINK_URL;
                         _context.Graphs.Add(newGraph);

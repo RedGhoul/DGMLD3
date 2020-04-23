@@ -93,28 +93,6 @@ namespace DGMLD3.Controllers
             return View(graph);
         }
 
-        // GET: Graphs/Create
-        public IActionResult Create()
-        {
-            return View();
-        }
-
-        // POST: Graphs/Create
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name")] Graph graph)
-        {
-            if (ModelState.IsValid)
-            {
-                _context.Add(graph);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
-            }
-            return View(graph);
-        }
-
         // GET: Graphs/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
@@ -136,7 +114,7 @@ namespace DGMLD3.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name")] Graph graph)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,ReadableName,IsPublic")] Graph graph)
         {
             if (id != graph.Id)
             {
@@ -147,7 +125,10 @@ namespace DGMLD3.Controllers
             {
                 try
                 {
-                    _context.Update(graph);
+                    var curGraph = await _context.Graphs.Where(x => x.Id == graph.Id).FirstOrDefaultAsync();
+                    curGraph.ReadableName = graph.ReadableName;
+                    curGraph.IsPublic = graph.IsPublic;
+                    //_context.Update(graph);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)

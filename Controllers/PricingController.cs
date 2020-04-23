@@ -24,7 +24,7 @@ namespace DGMLD3.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> Index()
         {
-            var plans = await _context.Graphs.Where(x => x.IsPublic == true).OrderBy(x => x.Id).ToListAsync();
+            var plans = await _context.PricePlans.Where(x => x.IsActive == true).OrderBy(x => x.Id).ToListAsync();
             return View(plans);
         }
 
