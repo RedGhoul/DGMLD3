@@ -166,7 +166,7 @@
     }
 
     function ticked() {
-        
+
         //update circle positions each tick of the simulation
         node
             .attr("cx", function (d) { return d.x; })
@@ -182,5 +182,25 @@
         text
             .attr("transform", function (d) { return "translate(" + d.x + 8 + "," + d.y + 8 + ")"; });
     }
+    $.ajax({
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        },
+        url: '/api/SVGStore/SaveSVG/@ViewBag.Graph_ID',
+        type: 'POST',
+        data: JSON.stringify({
+            SVG: document.getElementsByTagName('svg')[0].outerHTML
+        }),
+        error: function () {
+            console.log('<p>An error has occurred</p>');
+        },
+        dataType: 'json',
+        success: function (data) {
+            console.log(data);
+        },
+
+    });
+   
 </script>
 }
