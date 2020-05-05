@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace DGMLD3.Models
+namespace DGMLD3.Data.VIEW
 {
     public class UploadViewModel
     {

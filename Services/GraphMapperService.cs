@@ -1,4 +1,6 @@
 ﻿using DGMLD3.Data;
+using DGMLD3.Data.DTO;
+using DGMLD3.Data.RDMS;
 using DGMLD3.QuickType;
 using DGMLD3.QuickType.CodeMapConversion;
 using DGMLD3.QuickType.DBMapConversion;
@@ -15,13 +17,13 @@ namespace DGMLD3.Services
 {
     public static class GraphMapperService
     {
-        public static (List<GraphNode>, List<GraphLink>) GenerateD3Network(Stream file, string DGML_Type_ID)
+        public static (List<GraphNodeDTO>, List<GraphLinkDTO>) GenerateD3Network(Stream file, string DGML_Type_ID)
         {
             XmlDocument doc = new XmlDocument();
             doc.Load(file);
             string json = JsonConvert.SerializeXmlNode(doc);
-            List<GraphNode> nodes = new List<GraphNode>();
-            List<GraphLink> links = new List<GraphLink>();
+            List<GraphNodeDTO> nodes = new List<GraphNodeDTO>();
+            List<GraphLinkDTO> links = new List<GraphLinkDTO>();
             if (DGML_Type_ID.Equals("DB"))
             {
                 DbMap CurrentDBMap = DbMap.FromJson(json);
@@ -31,7 +33,7 @@ namespace DGMLD3.Services
                    
                         if (CurrentDBMap.DirectedGraph.Nodes.Node[i].Category == Id.Table)
                         {
-                            nodes.Add(new GraphNode
+                            nodes.Add(new GraphNodeDTO
                             {
                                 color = "#7a89de",
                                 group = "1",
@@ -41,7 +43,7 @@ namespace DGMLD3.Services
                         }
                         else if (CurrentDBMap.DirectedGraph.Nodes.Node[i].Category == Id.ForeignKey)
                         {
-                            nodes.Add(new GraphNode
+                            nodes.Add(new GraphNodeDTO
                             {
                                 color = "#e3176f",
                                 group = "1",
@@ -51,7 +53,7 @@ namespace DGMLD3.Services
                         }
                         else
                         {
-                            nodes.Add(new GraphNode
+                            nodes.Add(new GraphNodeDTO
                             {
                                 color = "#9f85a6",
                                 group = "1",
@@ -63,7 +65,7 @@ namespace DGMLD3.Services
                 for (int i = 0; i < CurrentDBMap.DirectedGraph.Links.Link.Length; i++)
                 {
 
-                    links.Add(new GraphLink
+                    links.Add(new GraphLinkDTO
                     {
                         source = CurrentDBMap.DirectedGraph.Links.Link[i].Source,
                         target = CurrentDBMap.DirectedGraph.Links.Link[i].Target
@@ -75,7 +77,7 @@ namespace DGMLD3.Services
                 CodeMap CurrentDBMap = CodeMap.FromJson(json);
                 for (int i = 0; i < CurrentDBMap.DirectedGraph.Nodes.Node.Length; i++)
                 {
-                    nodes.Add(new GraphNode
+                    nodes.Add(new GraphNodeDTO
                     {
                         color = "#7a89de",
                         group = "1",
@@ -87,7 +89,7 @@ namespace DGMLD3.Services
                 for (int i = 0; i < CurrentDBMap.DirectedGraph.Links.Link.Length; i++)
                 {
 
-                    links.Add(new GraphLink
+                    links.Add(new GraphLinkDTO
                     {
                         source = CurrentDBMap.DirectedGraph.Links.Link[i].Source,
                         target = CurrentDBMap.DirectedGraph.Links.Link[i].Target
@@ -100,15 +102,17 @@ namespace DGMLD3.Services
         }
 
 
-        public static Graph MapToNewGraphInDB(List<GraphNode> nodes, List<GraphLink> links)
+        public static Graph MapToNewGraphInDB(List<GraphNodeDTO> nodes, List<GraphLinkDTO> links)
         {
-            Graph newGraph = new Graph();
-            newGraph.Name = Guid.NewGuid().ToString();
-            newGraph.Nodes = new List<Data.Node>();
-            newGraph.Links = new List<Data.Link>();
+            Graph newGraph = new Graph
+            {
+                Name = Guid.NewGuid().ToString(),
+                Nodes = new List<Data.RDMS.Node>(),
+                Links = new List<Data.RDMS.Link>()
+            };
             foreach (var item in nodes)
             {
-                newGraph.Nodes.Add(new Data.Node
+                newGraph.Nodes.Add(new Data.RDMS.Node
                 {
                     group = item.group,
                     name = item.name,
@@ -118,7 +122,7 @@ namespace DGMLD3.Services
             }
             foreach (var item in links)
             {
-                newGraph.Links.Add(new Data.Link
+                newGraph.Links.Add(new Data.RDMS.Link
                 {
                     source = item.source,
                     target = item.target,
@@ -128,13 +132,13 @@ namespace DGMLD3.Services
             return newGraph;
         }
 
-        public static (List<GraphNode>, List<GraphLink>) MapGraphToDTOs(Graph graph)
+        public static (List<GraphNodeDTO>, List<GraphLinkDTO>) MapGraphToDTOs(Graph graph)
         {
-            List<GraphNode> nodes = new List<GraphNode>();
-            List<GraphLink> links = new List<GraphLink>();
+            List<GraphNodeDTO> nodes = new List<GraphNodeDTO>();
+            List<GraphLinkDTO> links = new List<GraphLinkDTO>();
             foreach (var item in graph.Links)
             {
-                links.Add(new GraphLink
+                links.Add(new GraphLinkDTO
                 {
                     source = item.source,
                     target = item.target
@@ -143,7 +147,7 @@ namespace DGMLD3.Services
 
             foreach (var item in graph.Nodes)
             {
-                nodes.Add(new GraphNode
+                nodes.Add(new GraphNodeDTO
                 {
                     id = item.NodeId,
                     group = item.group,

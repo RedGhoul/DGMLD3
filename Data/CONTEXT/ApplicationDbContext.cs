@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using DGMLD3.Data.RDMS;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
-namespace DGMLD3.Data
+namespace DGMLD3.Data.CONTEXT
 {
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {

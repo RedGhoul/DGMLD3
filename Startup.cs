@@ -15,6 +15,8 @@ using Microsoft.Extensions.Hosting;
 using DGMLD3.Services;
 using System.Security.Claims;
 using DGMLD3.Utils;
+using DGMLD3.Data.CONTEXT;
+using DGMLD3.Data.RDMS;
 
 namespace DGMLD3
 {
@@ -89,49 +91,47 @@ namespace DGMLD3
 
         private async Task CreateUserRoles(IApplicationBuilder app)
         {
-            using (IServiceScope scope = app.ApplicationServices.CreateScope())
+            using IServiceScope scope = app.ApplicationServices.CreateScope();
+            var RoleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+            var UserManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
+            //var JobsRepo = scope.ServiceProvider.GetRequiredService<IJobPostingRepository>();
+            //await JobsRepo.BuildCache();
+            var content = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+
+            IdentityResult roleResult;
+
+            //Adding Admin Role
+            var roleCheck = await RoleManager.RoleExistsAsync("Admin");
+            if (!roleCheck)
             {
-                var RoleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
-                var UserManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
-                //var JobsRepo = scope.ServiceProvider.GetRequiredService<IJobPostingRepository>();
-                //await JobsRepo.BuildCache();
-                var content = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+                //create the roles and seed them to the database
+                roleResult = await RoleManager.CreateAsync(new IdentityRole("Admin"));
+            }
 
-                IdentityResult roleResult;
-
-                //Adding Admin Role
-                var roleCheck = await RoleManager.RoleExistsAsync("Admin");
-                if (!roleCheck)
+            //Assign Admin role to the main User here we have given our newly registered 
+            //login id for Admin management
+            // Also Assigning them Claims to perform CUD operations
+            ApplicationUser user = await UserManager.FindByEmailAsync("avaneesab5@gmail.com");
+            if (user != null)
+            {
+                var currentUserRoles = await UserManager.GetRolesAsync(user);
+                if (!currentUserRoles.Contains("Admin"))
                 {
-                    //create the roles and seed them to the database
-                    roleResult = await RoleManager.CreateAsync(new IdentityRole("Admin"));
+                    await UserManager.AddToRoleAsync(user, "Admin");
                 }
 
-                //Assign Admin role to the main User here we have given our newly registered 
-                //login id for Admin management
-                // Also Assigning them Claims to perform CUD operations
-                ApplicationUser user = await UserManager.FindByEmailAsync("avaneesab5@gmail.com");
-                if (user != null)
-                {
-                    var currentUserRoles = await UserManager.GetRolesAsync(user);
-                    if (!currentUserRoles.Contains("Admin"))
-                    {
-                        await UserManager.AddToRoleAsync(user, "Admin");
-                    }
+                //var currentClaims = await UserManager.GetClaimsAsync(user);
+                //if (!currentClaims.Any())
+                //{
+                //    var CanCreatePostingClaim = new Claim("CanViewGraphs", "True");
+                //    await UserManager.AddClaimAsync(user, CanCreatePostingClaim);
 
-                    //var currentClaims = await UserManager.GetClaimsAsync(user);
-                    //if (!currentClaims.Any())
-                    //{
-                    //    var CanCreatePostingClaim = new Claim("CanViewGraphs", "True");
-                    //    await UserManager.AddClaimAsync(user, CanCreatePostingClaim);
+                //    var CanEditPostingClaim = new Claim("CanEditPosting", "True");
+                //    await UserManager.AddClaimAsync(user, CanEditPostingClaim);
 
-                    //    var CanEditPostingClaim = new Claim("CanEditPosting", "True");
-                    //    await UserManager.AddClaimAsync(user, CanEditPostingClaim);
-
-                    //    var CanDeletePostingClaim = new Claim("CanDeletePosting", "True");
-                    //    await UserManager.AddClaimAsync(user, CanDeletePostingClaim);
-                    //}
-                }
+                //    var CanDeletePostingClaim = new Claim("CanDeletePosting", "True");
+                //    await UserManager.AddClaimAsync(user, CanDeletePostingClaim);
+                //}
             }
 
         }

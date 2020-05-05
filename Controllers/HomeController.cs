@@ -1,19 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using DGMLD3.Models;
-using System.Xml;
-using Newtonsoft.Json;
-using DGMLD3.QuickType;
-using DGMLD3.Data;
 using Microsoft.AspNetCore.Http;
-using System.IO;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using DGMLD3.Data.CONTEXT;
+using DGMLD3.Data.VIEW;
 
 namespace DGMLD3.Controllers
 {

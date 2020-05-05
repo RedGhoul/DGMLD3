@@ -16,6 +16,8 @@ using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using DGMLD3.Data.RDMS;
+using DGMLD3.Data.CONTEXT;
 
 namespace DGMLD3.Areas.Identity.Pages.Account
 {
@@ -86,7 +88,7 @@ namespace DGMLD3.Areas.Identity.Pages.Account
             }
             else
             {
-                returnUrl = returnUrl ?? Url.Content("~/");
+                returnUrl ??= Url.Content("~/");
                 ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
                 if (ModelState.IsValid)
                 {
@@ -103,7 +105,7 @@ namespace DGMLD3.Areas.Identity.Pages.Account
                         var callbackUrl = Url.Page(
                             "/Account/ConfirmEmail",
                             pageHandler: null,
-                            values: new { area = "Identity", userId = user.Id, code = code },
+                            values: new { area = "Identity", userId = user.Id, code },
                             protocol: Request.Scheme);
 
                         await _emailSender.SendEmailAsync(Input.Email, "Confirm your email",

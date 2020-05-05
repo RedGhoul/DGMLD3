@@ -1,14 +1,14 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using DGMLD3.Data;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
-using DGMLD3.Models;
+using DGMLD3.Data.CONTEXT;
+using DGMLD3.Data.RDMS;
+using DGMLD3.Data.VIEW;
 
 namespace DGMLD3.Controllers
 {
@@ -55,24 +55,14 @@ namespace DGMLD3.Controllers
                                        || s.target.Contains(searchString));
             }
 
-            switch (sortOrder)
+            links = sortOrder switch
             {
-                case "target_desc":
-                    links = links.OrderByDescending(s => s.target);
-                    break;
-                case "target_asc":
-                    links = links.OrderBy(s => s.target);
-                    break;
-                case "source_desc":
-                    links = links.OrderByDescending(s => s.source);
-                    break;
-                case "source_asc":
-                    links = links.OrderBy(s => s.source);
-                    break;
-                default:
-                    links = links.OrderByDescending(s => s.target);
-                    break;
-            }
+                "target_desc" => links.OrderByDescending(s => s.target),
+                "target_asc" => links.OrderBy(s => s.target),
+                "source_desc" => links.OrderByDescending(s => s.source),
+                "source_asc" => links.OrderBy(s => s.source),
+                _ => links.OrderByDescending(s => s.target),
+            };
             int pageSize = 10;
             return View(await PaginatedList<Link>.CreateAsync(links.AsNoTracking(), pageNumber ?? 1, pageSize));
         }

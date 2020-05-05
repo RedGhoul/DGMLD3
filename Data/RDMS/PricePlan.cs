@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace DGMLD3.Data
+namespace DGMLD3.Data.RDMS
 {
     public class PricePlan
     {

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace DGMLD3.Data
+namespace DGMLD3.Data.RDMS
 {
     public class Graph
     {
