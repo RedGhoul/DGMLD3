@@ -451,6 +451,8 @@ namespace DGMLD3.QuickType.CodeMapConversion
                     return DataVirtualized.False;
                 case "True":
                     return DataVirtualized.True;
+                default:
+                    break;
             }
             throw new Exception("Cannot unmarshal type DataVirtualized");
         }
@@ -517,34 +519,22 @@ namespace DGMLD3.QuickType.CodeMapConversion
         {
             if (reader.TokenType == JsonToken.Null) return null;
             var value = serializer.Deserialize<string>(reader);
-            switch (value)
+            return value switch
             {
-                case "CodeMap_Project":
-                    return Icon.CodeMapProject;
-                case "CodeMap_SolutionFolder":
-                    return Icon.CodeMapSolutionFolder;
-                case "CodeSchema_Assembly":
-                    return Icon.CodeSchemaAssembly;
-                case "CodeSchema_Class":
-                    return Icon.CodeSchemaClass;
-                case "CodeSchema_Enum":
-                    return Icon.CodeSchemaEnum;
-                case "CodeSchema_Field":
-                    return Icon.CodeSchemaField;
-                case "CodeSchema_Interface":
-                    return Icon.CodeSchemaInterface;
-                case "CodeSchema_Method":
-                    return Icon.CodeSchemaMethod;
-                case "CodeSchema_Namespace":
-                    return Icon.CodeSchemaNamespace;
-                case "CodeSchema_Property":
-                    return Icon.CodeSchemaProperty;
-                case "Externals":
-                    return Icon.Externals;
-                case "File":
-                    return Icon.File;
-            }
-            throw new Exception("Cannot unmarshal type Icon");
+                "CodeMap_Project" => Icon.CodeMapProject,
+                "CodeMap_SolutionFolder" => Icon.CodeMapSolutionFolder,
+                "CodeSchema_Assembly" => Icon.CodeSchemaAssembly,
+                "CodeSchema_Class" => Icon.CodeSchemaClass,
+                "CodeSchema_Enum" => Icon.CodeSchemaEnum,
+                "CodeSchema_Field" => Icon.CodeSchemaField,
+                "CodeSchema_Interface" => Icon.CodeSchemaInterface,
+                "CodeSchema_Method" => Icon.CodeSchemaMethod,
+                "CodeSchema_Namespace" => Icon.CodeSchemaNamespace,
+                "CodeSchema_Property" => Icon.CodeSchemaProperty,
+                "Externals" => Icon.Externals,
+                "File" => Icon.File,
+                _ => throw new Exception("Cannot unmarshal type Icon"),
+            };
         }
 
         public override void WriteJson(JsonWriter writer, object untypedValue, JsonSerializer serializer)
@@ -608,34 +598,22 @@ namespace DGMLD3.QuickType.CodeMapConversion
         {
             if (reader.TokenType == JsonToken.Null) return null;
             var value = serializer.Deserialize<string>(reader);
-            switch (value)
+            return value switch
             {
-                case "CodeMap_ExternalReference":
-                    return Category.CodeMapExternalReference;
-                case "CodeMap_ProjectReference":
-                    return Category.CodeMapProjectReference;
-                case "CodeSchema_AttributeUse":
-                    return Category.CodeSchemaAttributeUse;
-                case "CodeSchema_Calls":
-                    return Category.CodeSchemaCalls;
-                case "CodeSchema_FieldRead":
-                    return Category.CodeSchemaFieldRead;
-                case "CodeSchema_FieldWrite":
-                    return Category.CodeSchemaFieldWrite;
-                case "CodeSchema_FunctionPointer":
-                    return Category.CodeSchemaFunctionPointer;
-                case "CodeSchema_ReturnTypeLink":
-                    return Category.CodeSchemaReturnTypeLink;
-                case "Contains":
-                    return Category.Contains;
-                case "Implements":
-                    return Category.Implements;
-                case "InheritsFrom":
-                    return Category.InheritsFrom;
-                case "References":
-                    return Category.References;
-            }
-            throw new Exception("Cannot unmarshal type Category");
+                "CodeMap_ExternalReference" => Category.CodeMapExternalReference,
+                "CodeMap_ProjectReference" => Category.CodeMapProjectReference,
+                "CodeSchema_AttributeUse" => Category.CodeSchemaAttributeUse,
+                "CodeSchema_Calls" => Category.CodeSchemaCalls,
+                "CodeSchema_FieldRead" => Category.CodeSchemaFieldRead,
+                "CodeSchema_FieldWrite" => Category.CodeSchemaFieldWrite,
+                "CodeSchema_FunctionPointer" => Category.CodeSchemaFunctionPointer,
+                "CodeSchema_ReturnTypeLink" => Category.CodeSchemaReturnTypeLink,
+                "Contains" => Category.Contains,
+                "Implements" => Category.Implements,
+                "InheritsFrom" => Category.InheritsFrom,
+                "References" => Category.References,
+                _ => throw new Exception("Cannot unmarshal type Category"),
+            };
         }
 
         public override void WriteJson(JsonWriter writer, object untypedValue, JsonSerializer serializer)
@@ -736,36 +714,23 @@ namespace DGMLD3.QuickType.CodeMapConversion
         {
             if (reader.TokenType == JsonToken.Null) return null;
             var value = serializer.Deserialize<string>(reader);
-            switch (value)
+            return value switch
             {
-                case "CodeMap_TestAsset":
-                    return Ref.CodeMapTestAsset;
-                case "CodeMap_TestProject":
-                    return Ref.CodeMapTestProject;
-                case "CodeMap_WebProject":
-                    return Ref.CodeMapWebProject;
-                case "CodeSchema_AttributeUse":
-                    return Ref.CodeSchemaAttributeUse;
-                case "CodeSchema_Calls":
-                    return Ref.CodeSchemaCalls;
-                case "CodeSchema_FieldRead":
-                    return Ref.CodeSchemaFieldRead;
-                case "CodeSchema_FieldWrite":
-                    return Ref.CodeSchemaFieldWrite;
-                case "CodeSchema_ReturnTypeLink":
-                    return Ref.CodeSchemaReturnTypeLink;
-                case "FileSystem.Category.FileOfType.dll":
-                    return Ref.FileSystemCategoryFileOfTypeDll;
-                case "Implements":
-                    return Ref.Implements;
-                case "InheritsFrom":
-                    return Ref.InheritsFrom;
-                case "References":
-                    return Ref.References;
-                case "CodeSchema_FunctionPointer":
-                    return Ref.CodeSchemaFunctionPointer;
-            }
-            throw new Exception("Cannot unmarshal type Ref");
+                "CodeMap_TestAsset" => Ref.CodeMapTestAsset,
+                "CodeMap_TestProject" => Ref.CodeMapTestProject,
+                "CodeMap_WebProject" => Ref.CodeMapWebProject,
+                "CodeSchema_AttributeUse" => Ref.CodeSchemaAttributeUse,
+                "CodeSchema_Calls" => Ref.CodeSchemaCalls,
+                "CodeSchema_FieldRead" => Ref.CodeSchemaFieldRead,
+                "CodeSchema_FieldWrite" => Ref.CodeSchemaFieldWrite,
+                "CodeSchema_ReturnTypeLink" => Ref.CodeSchemaReturnTypeLink,
+                "FileSystem.Category.FileOfType.dll" => Ref.FileSystemCategoryFileOfTypeDll,
+                "Implements" => Ref.Implements,
+                "InheritsFrom" => Ref.InheritsFrom,
+                "References" => Ref.References,
+                "CodeSchema_FunctionPointer" => Ref.CodeSchemaFunctionPointer,
+                _ => throw new Exception("Cannot unmarshal type Ref"),
+            };
         }
 
         public override void WriteJson(JsonWriter writer, object untypedValue, JsonSerializer serializer)
@@ -829,14 +794,12 @@ namespace DGMLD3.QuickType.CodeMapConversion
         {
             if (reader.TokenType == JsonToken.Null) return null;
             var value = serializer.Deserialize<string>(reader);
-            switch (value)
+            return value switch
             {
-                case "Fetched":
-                    return DelayedCsState.Fetched;
-                case "NotFetched":
-                    return DelayedCsState.NotFetched;
-            }
-            throw new Exception("Cannot unmarshal type DelayedCsState");
+                "Fetched" => DelayedCsState.Fetched,
+                "NotFetched" => DelayedCsState.NotFetched,
+                _ => throw new Exception("Cannot unmarshal type DelayedCsState"),
+            };
         }
 
         public override void WriteJson(JsonWriter writer, object untypedValue, JsonSerializer serializer)
@@ -870,14 +833,12 @@ namespace DGMLD3.QuickType.CodeMapConversion
         {
             if (reader.TokenType == JsonToken.Null) return null;
             var value = serializer.Deserialize<string>(reader);
-            switch (value)
+            return value switch
             {
-                case "Collapsed":
-                    return Group.Collapsed;
-                case "Expanded":
-                    return Group.Expanded;
-            }
-            throw new Exception("Cannot unmarshal type Group");
+                "Collapsed" => Group.Collapsed,
+                "Expanded" => Group.Expanded,
+                _ => throw new Exception("Cannot unmarshal type Group"),
+            };
         }
 
         public override void WriteJson(JsonWriter writer, object untypedValue, JsonSerializer serializer)
@@ -911,14 +872,12 @@ namespace DGMLD3.QuickType.CodeMapConversion
         {
             if (reader.TokenType == JsonToken.Null) return null;
             var value = serializer.Deserialize<string>(reader);
-            switch (value)
+            return value switch
             {
-                case "Link":
-                    return TargetType.Link;
-                case "Node":
-                    return TargetType.Node;
-            }
-            throw new Exception("Cannot unmarshal type TargetType");
+                "Link" => TargetType.Link,
+                "Node" => TargetType.Node,
+                _ => throw new Exception("Cannot unmarshal type TargetType"),
+            };
         }
 
         public override void WriteJson(JsonWriter writer, object untypedValue, JsonSerializer serializer)
@@ -1023,28 +982,19 @@ namespace DGMLD3.QuickType.CodeMapConversion
         {
             if (reader.TokenType == JsonToken.Null) return null;
             var value = serializer.Deserialize<string>(reader);
-            switch (value)
+            return value switch
             {
-                case "Background":
-                    return PropertyEnum.Background;
-                case "DrawArrow":
-                    return PropertyEnum.DrawArrow;
-                case "Icon":
-                    return PropertyEnum.Icon;
-                case "IndicatorWest":
-                    return PropertyEnum.IndicatorWest;
-                case "IsHidden":
-                    return PropertyEnum.IsHidden;
-                case "LayoutSettings":
-                    return PropertyEnum.LayoutSettings;
-                case "Stroke":
-                    return PropertyEnum.Stroke;
-                case "StrokeDashArray":
-                    return PropertyEnum.StrokeDashArray;
-                case "TargetDecorator":
-                    return PropertyEnum.TargetDecorator;
-            }
-            throw new Exception("Cannot unmarshal type PropertyEnum");
+                "Background" => PropertyEnum.Background,
+                "DrawArrow" => PropertyEnum.DrawArrow,
+                "Icon" => PropertyEnum.Icon,
+                "IndicatorWest" => PropertyEnum.IndicatorWest,
+                "IsHidden" => PropertyEnum.IsHidden,
+                "LayoutSettings" => PropertyEnum.LayoutSettings,
+                "Stroke" => PropertyEnum.Stroke,
+                "StrokeDashArray" => PropertyEnum.StrokeDashArray,
+                "TargetDecorator" => PropertyEnum.TargetDecorator,
+                _ => throw new Exception("Cannot unmarshal type PropertyEnum"),
+            };
         }
 
         public override void WriteJson(JsonWriter writer, object untypedValue, JsonSerializer serializer)

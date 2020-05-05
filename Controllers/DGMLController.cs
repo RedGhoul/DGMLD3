@@ -5,8 +5,10 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Xml;
 using DGMLD3.Data;
-using DGMLD3.Models;
-using DGMLD3.QuickType;
+using DGMLD3.Data.CONTEXT;
+using DGMLD3.Data.DTO;
+using DGMLD3.Data.RDMS;
+using DGMLD3.Data.VIEW;
 using DGMLD3.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -40,27 +42,29 @@ namespace DGMLD3.Controllers
             if(Path.GetExtension(fileName).Equals(".dgml")){
                 try
                 {
-                    using (var uploadedFile = model.file.OpenReadStream())
-                    {
-                        (List<GraphNode> nodes, List<GraphLink> links) = GraphMapperService.GenerateD3Network(uploadedFile, model.DGML_Type_ID);
+                    using var uploadedFile = model.file.OpenReadStream();
+                    (List<GraphNodeDTO> nodes, List<GraphLinkDTO> links) = GraphMapperService.GenerateD3Network(uploadedFile, model.DGML_Type_ID);
 
-                        Graph newGraph = GraphMapperService.MapToNewGraphInDB(nodes, links);
-                        _context.Graphs.Add(newGraph);
-                        await _context.SaveChangesAsync();
+                    Graph newGraph = GraphMapperService.MapToNewGraphInDB(nodes, links);
+                    newGraph.ReadableName = model.GraphName;
+                    string LINK_URL = "https://" + Request.Host.Value + "/DGML/ViewNetwork?graphName=" + newGraph.Name;
+                    newGraph.GraphLinkURL = LINK_URL;
+                    _context.Graphs.Add(newGraph);
+                    await _context.SaveChangesAsync();
 
-                        string NODES = JsonConvert.SerializeObject(nodes);
-                        string LINKS = JsonConvert.SerializeObject(links);
+                    string NODES = JsonConvert.SerializeObject(nodes);
+                    string LINKS = JsonConvert.SerializeObject(links);
 
-                        ViewBag.NODES = NODES;
-                        ViewBag.LINKS = LINKS;
+                    ViewBag.NODES = NODES;
+                    ViewBag.LINKS = LINKS;
 
-                        await _graphRedisService.SaveGraphToCache(newGraph);
+                    await _graphRedisService.SaveGraphToCache(newGraph);
 
-                        ViewBag.LINK_URL = "https://" + Request.Host.Value + "/DGML/ViewNetwork?graphName=" + newGraph.Name;
-                    }
+                    ViewBag.LINK_URL = LINK_URL;
                 }
-                catch (Exception e)
+                catch (Exception error)
                 {
+                    Console.WriteLine(error.Message);
                     model.ErrorMsg = "Could not read file";
                     return View("Upload", model);
                 }
@@ -80,7 +84,9 @@ namespace DGMLD3.Controllers
         [ResponseCache(Duration = 30)]
         public async Task<IActionResult> ViewNetwork([FromQuery]string graphName)
         {
-            ViewBag.LINK_URL = "https://" + Request.Host.Value + "/DGML/ViewNetwork?graphName=" + graphName;
+            var graph = await _context.Graphs.Where(x => x.Name.Equals(graphName)).FirstOrDefaultAsync();
+          
+            ViewBag.LINK_URL = graph.GraphLinkURL;
 
             var (Links,Nodes) = await _graphRedisService.GetGraphFromCache(graphName);
             if (!string.IsNullOrEmpty(Links) && !string.IsNullOrEmpty(Nodes))
@@ -90,10 +96,10 @@ namespace DGMLD3.Controllers
             }
             else
             {
-                Graph graph = await _context.Graphs.Where(x => x.Name.Equals(graphName)).Include(x => x.Links).
+                Graph fullGraph = await _context.Graphs.Where(x => x.Name.Equals(graphName)).Include(x => x.Links).
                    Include(x => x.Nodes).
                    FirstOrDefaultAsync();
-                (List<GraphNode> nodes, List<GraphLink> links) = GraphMapperService.MapGraphToDTOs(graph);
+                (List<GraphNodeDTO> nodes, List<GraphLinkDTO> links) = GraphMapperService.MapGraphToDTOs(fullGraph);
                 ViewBag.NODES = JsonConvert.SerializeObject(nodes);
                 ViewBag.LINKS = JsonConvert.SerializeObject(links);
             }

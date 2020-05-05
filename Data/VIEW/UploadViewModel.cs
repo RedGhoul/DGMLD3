@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace DGMLD3.Models
+namespace DGMLD3.Data.VIEW
 {
     public class UploadViewModel
     {
@@ -14,6 +14,7 @@ namespace DGMLD3.Models
         public IEnumerable<SelectListItem> DGML_Types { get; set; }
         public string ErrorMsg { get; set; }
 
+        public string GraphName { get; set; }
         public UploadViewModel()
         {
             this.DGML_Types = new List<SelectListItem>()

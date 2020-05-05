@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace DGMLD3.Data
+namespace DGMLD3.Data.RDMS
 {
     public class ApplicationUser : IdentityUser
     {
@@ -17,5 +17,6 @@ namespace DGMLD3.Data
         public string LastName { get; set; }
         public ICollection<Graph> Graphs { get; set; }
         public DateTime DateCreated { get; set; }
+        public PricePlan Plan { get; set; }
     }
 }

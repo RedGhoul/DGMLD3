@@ -1,13 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using DGMLD3.Data;
 using Microsoft.AspNetCore.Authorization;
-using DGMLD3.Models;
+using DGMLD3.Data.CONTEXT;
+using DGMLD3.Data.RDMS;
+using DGMLD3.Data.VIEW;
 
 namespace DGMLD3.Controllers
 {
@@ -47,30 +46,16 @@ namespace DGMLD3.Controllers
                                        || s.ReadableName.Contains(searchString));
             }
 
-            switch (sortOrder)
+            graphs = sortOrder switch
             {
-                case "name_desc":
-                    graphs = graphs.OrderByDescending(s => s.Name);
-                    break;
-                case "name_asc":
-                    graphs = graphs.OrderBy(s => s.Name);
-                    break;
-                case "g_name_desc":
-                    graphs = graphs.OrderByDescending(s => s.ReadableName);
-                    break;
-                case "g_name_asc":
-                    graphs = graphs.OrderBy(s => s.ReadableName);
-                    break;
-                case "date_desc":
-                    graphs = graphs.OrderByDescending(s => s.DateCreated);
-                    break;
-                case "date_asc":
-                    graphs = graphs.OrderByDescending(s => s.DateCreated);
-                    break;
-                default:
-                    graphs = graphs.OrderBy(s => s.Name);
-                    break;
-            }
+                "name_desc" => graphs.OrderByDescending(s => s.Name),
+                "name_asc" => graphs.OrderBy(s => s.Name),
+                "g_name_desc" => graphs.OrderByDescending(s => s.ReadableName),
+                "g_name_asc" => graphs.OrderBy(s => s.ReadableName),
+                "date_desc" => graphs.OrderByDescending(s => s.DateCreated),
+                "date_asc" => graphs.OrderByDescending(s => s.DateCreated),
+                _ => graphs.OrderBy(s => s.Name),
+            };
             int pageSize = 10;
             return View(await PaginatedList<Graph>.CreateAsync(graphs.AsNoTracking(), pageNumber ?? 1, pageSize));
         }
@@ -90,28 +75,6 @@ namespace DGMLD3.Controllers
                 return NotFound();
             }
 
-            return View(graph);
-        }
-
-        // GET: Graphs/Create
-        public IActionResult Create()
-        {
-            return View();
-        }
-
-        // POST: Graphs/Create
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name")] Graph graph)
-        {
-            if (ModelState.IsValid)
-            {
-                _context.Add(graph);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
-            }
             return View(graph);
         }
 
@@ -136,7 +99,7 @@ namespace DGMLD3.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name")] Graph graph)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,ReadableName,IsPublic")] Graph graph)
         {
             if (id != graph.Id)
             {
@@ -147,7 +110,10 @@ namespace DGMLD3.Controllers
             {
                 try
                 {
-                    _context.Update(graph);
+                    var curGraph = await _context.Graphs.Where(x => x.Id == graph.Id).FirstOrDefaultAsync();
+                    curGraph.ReadableName = graph.ReadableName;
+                    curGraph.IsPublic = graph.IsPublic;
+                    //_context.Update(graph);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)

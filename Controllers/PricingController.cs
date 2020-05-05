@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using DGMLD3.Data;
 using Microsoft.AspNetCore.Authorization;
+using DGMLD3.Data.CONTEXT;
+using DGMLD3.Data.RDMS;
 
 namespace DGMLD3.Controllers
 {
@@ -24,7 +26,8 @@ namespace DGMLD3.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Prices.ToListAsync());
+            var plans = await _context.PricePlans.Where(x => x.IsActive == true).OrderBy(x => x.Id).ToListAsync();
+            return View(plans);
         }
 
         // GET: Pricing/Details/5
@@ -35,7 +38,7 @@ namespace DGMLD3.Controllers
                 return NotFound();
             }
 
-            var pricing = await _context.Prices
+            var pricing = await _context.PricePlans
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (pricing == null)
             {
@@ -54,7 +57,7 @@ namespace DGMLD3.Controllers
         // POST: Pricing/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Name,ChargeAmount,Features,BillingPer,IsActive")] Price pricing)
+        public async Task<IActionResult> Create([Bind("Name,ChargeAmount,Features,BillingPer,IsActive")] PricePlan pricing)
         {
             if (ModelState.IsValid)
             {
@@ -73,7 +76,7 @@ namespace DGMLD3.Controllers
                 return NotFound();
             }
 
-            var pricing = await _context.Prices.FindAsync(id);
+            var pricing = await _context.PricePlans.FindAsync(id);
             if (pricing == null)
             {
                 return NotFound();
@@ -86,7 +89,7 @@ namespace DGMLD3.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,ChargeAmount,Features,BillingPer,IsActive")] Price pricing)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,ChargeAmount,Features,BillingPer,IsActive")] PricePlan pricing)
         {
             if (id != pricing.Id)
             {
@@ -124,7 +127,7 @@ namespace DGMLD3.Controllers
                 return NotFound();
             }
 
-            var pricing = await _context.Prices
+            var pricing = await _context.PricePlans
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (pricing == null)
             {
@@ -139,15 +142,15 @@ namespace DGMLD3.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var pricing = await _context.Prices.FindAsync(id);
-            _context.Prices.Remove(pricing);
+            var pricing = await _context.PricePlans.FindAsync(id);
+            _context.PricePlans.Remove(pricing);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
         private bool PricingExists(int id)
         {
-            return _context.Prices.Any(e => e.Id == id);
+            return _context.PricePlans.Any(e => e.Id == id);
         }
     }
 }

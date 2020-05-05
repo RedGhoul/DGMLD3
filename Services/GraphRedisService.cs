@@ -1,4 +1,6 @@
 ﻿using DGMLD3.Data;
+using DGMLD3.Data.DTO;
+using DGMLD3.Data.RDMS;
 using Microsoft.Extensions.Caching.Distributed;
 using Newtonsoft.Json;
 using System;
@@ -19,10 +21,12 @@ namespace DGMLD3.Services
         {
             var options = new DistributedCacheEntryOptions();
             options.SetSlidingExpiration(TimeSpan.FromDays(400));
-            (List<GraphNode> nodes, List<GraphLink> links) = GraphMapperService.MapGraphToDTOs(newGraph);
-            GraphDto graphDto = new GraphDto();
-            graphDto.Links = links;
-            graphDto.Nodes = nodes;
+            (List<GraphNodeDTO> nodes, List<GraphLinkDTO> links) = GraphMapperService.MapGraphToDTOs(newGraph);
+            GraphDto graphDto = new GraphDto
+            {
+                Links = links,
+                Nodes = nodes
+            };
             string GRAPH = JsonConvert.SerializeObject(graphDto);
             string cacheGraphKey = "GRAPH_" + newGraph.Name;
             await _distributedCache.SetStringAsync(cacheGraphKey, GRAPH, options);

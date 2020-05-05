@@ -1,34 +1,29 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using DGMLD3.Models;
-using System.Xml;
-using Newtonsoft.Json;
-using DGMLD3.QuickType;
-using DGMLD3.Data;
 using Microsoft.AspNetCore.Http;
-using System.IO;
-using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
+using DGMLD3.Data.CONTEXT;
+using DGMLD3.Data.VIEW;
 
 namespace DGMLD3.Controllers
 {
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
-
-        public HomeController(ILogger<HomeController> logger)
+        private readonly ApplicationDbContext _context;
+        public HomeController(ApplicationDbContext context,ILogger<HomeController> logger)
         {
             _logger = logger;
+            _context = context;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-
-            return View();
+            var graphs = await _context.Graphs.Where(x => x.IsPublic == true).ToListAsync();
+            return View(graphs);
         }
         
 

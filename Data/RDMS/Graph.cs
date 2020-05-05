@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace DGMLD3.Data
+namespace DGMLD3.Data.RDMS
 {
     public class Graph
     {
@@ -17,5 +17,7 @@ namespace DGMLD3.Data
         public string Name { get; set; }
         public string ReadableName { get; set; }
         public DateTime DateCreated { get; set; }
+        public string GraphLinkURL { get; set; }
+        public bool IsPublic { get; set; }
     }
 }
