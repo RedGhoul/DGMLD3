@@ -182,6 +182,7 @@
         text
             .attr("transform", function (d) { return "translate(" + d.x + 8 + "," + d.y + 8 + ")"; });
     }
+
     $.ajax({
         headers: {
             'Accept': 'application/json',
@@ -192,8 +193,8 @@
         data: JSON.stringify({
             SVG: document.getElementsByTagName('svg')[0].outerHTML
         }),
-        error: function () {
-            console.log('<p>An error has occurred</p>');
+        error: function (data) {
+            console.log(data);
         },
         dataType: 'json',
         success: function (data) {

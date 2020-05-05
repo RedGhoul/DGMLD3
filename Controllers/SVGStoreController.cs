@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using DGMLD3.Data.CONTEXT;
 using DGMLD3.Data.RDMS;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 
 namespace DGMLD3.Controllers
 {
@@ -15,10 +17,12 @@ namespace DGMLD3.Controllers
     public class SVGStoreController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
-
-        public SVGStoreController(ApplicationDbContext context)
+        private readonly UserManager<ApplicationUser> _userManager;
+        public SVGStoreController(ApplicationDbContext context,
+            UserManager<ApplicationUser> userManager)
         {
             _context = context;
+            _userManager = userManager;
         }
         public class SVGDTO
         {
@@ -29,31 +33,37 @@ namespace DGMLD3.Controllers
         [HttpPost("SaveSVG/{id}")]
         public async Task<IActionResult> SaveSVG(int id, SVGDTO SVG)
         {
-            if (!GraphExists(id))
+            if (HttpContext.User.Identity.IsAuthenticated)
             {
-                return NotFound();
+                if (!GraphExists(id))
+                {
+                    return NotFound();
+                }
+
+                var graph = _context.Graphs.FirstOrDefault(x => x.Id == id);
+
+                if (!string.IsNullOrEmpty(SVG.SVG))
+                {
+                    graph.SVG = SVG.SVG;
+
+                    try
+                    {
+                        await _context.SaveChangesAsync();
+                        return Ok();
+                    }
+                    catch (DbUpdateConcurrencyException error)
+                    {
+                        Console.WriteLine(error.InnerException);
+
+                    }
+                }
+
+
+                return BadRequest();
             }
 
-            var graph = _context.Graphs.FirstOrDefault(x => x.Id == id);
-            
-            if (!string.IsNullOrEmpty(SVG.SVG))
-            {
-                graph.SVG = SVG.SVG;
+            return NotFound();
 
-                try
-                {
-                    await _context.SaveChangesAsync();
-                    return Ok();
-                }
-                catch (DbUpdateConcurrencyException error)
-                {
-                    Console.WriteLine(error.InnerException);
-                    
-                }
-            }
-
-
-            return BadRequest();
         }
 
         private bool GraphExists(int id)
