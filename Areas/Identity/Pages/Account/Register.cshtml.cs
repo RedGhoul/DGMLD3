@@ -101,7 +101,7 @@ namespace DGMLD3.Areas.Identity.Pages.Account
                         _logger.LogInformation("User created a new account with password.");
 
                         user.Plan = plan;
-
+                        user.EmailConfirmed = true;
                         await _context.SaveChangesAsync();
                         await _signInManager.SignInAsync(user, isPersistent: false);
 
