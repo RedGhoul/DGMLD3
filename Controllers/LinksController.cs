@@ -77,7 +77,7 @@ namespace DGMLD3.Controllers
             ViewBag.GraphURL = graph.GraphLinkURL;
 
             ViewData["CurrentGraphId"] = currentGraphId;
-            var links = from s in _context.Links where s.GraphId == Int32.Parse(currentGraphId) select s;
+            var links = graph.Links.AsQueryable();
 
             if (!String.IsNullOrEmpty(searchString))
             {
