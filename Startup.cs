@@ -49,7 +49,16 @@ namespace DGMLD3
             services.AddSingleton<GraphRedisService, GraphRedisService>();
 
             services.AddControllersWithViews();
-            services.AddRazorPages().AddRazorRuntimeCompilation();
+
+            if (Secrets.GetAppSettingsValue(Configuration, "ENV").Equals("DEBUG"))
+            {
+                services.AddRazorPages().AddRazorRuntimeCompilation();
+            }
+            else
+            {
+                services.AddRazorPages();
+            }
+
             services.AddResponseCaching();
             services.AddResponseCompression();
             services.AddTransient<UserManager<ApplicationUser>>();
