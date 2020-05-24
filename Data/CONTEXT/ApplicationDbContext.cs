@@ -22,7 +22,10 @@ namespace DGMLD3.Data.CONTEXT
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
-            
+            builder.Entity<Graph>()
+            .HasOne<ApplicationUser>(s => s.Creator)
+            .WithMany(g => g.Graphs);
+
             builder.Entity<Graph>()
             .HasIndex(u => u.Name)
             .IsUnique();
