@@ -219,7 +219,7 @@ namespace DGMLD3.QuickType.DBMapConversion
 
     public enum CanLinkedNodesBeDataDriven { True };
 
-    public enum Id { Contains, Database, Field, FieldForeign, FieldOptional, FieldPrimary, ForeignKey, Hub, Schema, Table };
+    public enum Id { Contains, Database, Field, FieldForeign, FieldOptional, FieldPrimary, ForeignKey, Hub, Schema, Table, Model, EntityType, PropertyOptional, PropertyForeign, NavigationProperty, NavigationCollection, PropertyPrimary, PropertyRequired };
 
     public enum Label { Contains, ForeignKey };
 
@@ -366,6 +366,22 @@ namespace DGMLD3.QuickType.DBMapConversion
                     return Id.Schema;
                 case "Table":
                     return Id.Table;
+                case "Model":
+                    return Id.Model;
+                case "EntityType":
+                    return Id.EntityType;
+                case "Navigation Collection":
+                    return Id.NavigationCollection;
+                case "Navigation Property":
+                    return Id.NavigationProperty;
+                case "Property Foreign":
+                    return Id.PropertyForeign;
+                case "Property Optional":
+                    return Id.PropertyOptional;
+                case "Property Primary":
+                    return Id.PropertyPrimary;
+                case "Property Required":
+                    return Id.PropertyRequired;
             }
             throw new Exception("Cannot unmarshal type Id");
         }
@@ -409,6 +425,30 @@ namespace DGMLD3.QuickType.DBMapConversion
                     return;
                 case Id.Table:
                     serializer.Serialize(writer, "Table");
+                    return;
+                case Id.EntityType:
+                    serializer.Serialize(writer, "EntityType");
+                    return;
+                case Id.Model:
+                    serializer.Serialize(writer, "Model");
+                    return;
+                case Id.NavigationCollection:
+                    serializer.Serialize(writer, "Navigation Collection");
+                    return;
+                case Id.NavigationProperty:
+                    serializer.Serialize(writer, "Navigation Property");
+                    return;
+                case Id.PropertyForeign:
+                    serializer.Serialize(writer, "Property Foreign");
+                    return;
+                case Id.PropertyOptional:
+                    serializer.Serialize(writer, "Property Optional");
+                    return;
+                case Id.PropertyPrimary:
+                    serializer.Serialize(writer, "Property Primary");
+                    return;
+                case Id.PropertyRequired:
+                    serializer.Serialize(writer, "Property Required");
                     return;
             }
             throw new Exception("Cannot marshal type Id");
