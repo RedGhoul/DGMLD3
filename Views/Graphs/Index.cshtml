@@ -1,16 +1,18 @@
-﻿@model PaginatedList<Graph>
+﻿@model GraphTableViewModel
 
 <h1>Your Graphs</h1>
 
 <p>
     <a class="btn btn-primary" asp-action="Create">Create New</a>
 </p>
-<form asp-action="Index" method="get">
+<form asp-action="Sort" method="get">
     <div class="form-actions no-color">
         <div class="form-group">
             <label for="SearchString">Search:</label>
 
-            <input type="text" name="SearchString" class="form-control" value="@ViewData["SearchFilter"]" />
+            <input type="text" name="SearchString" class="form-control" value="@Model.SearchString" />
+            <input hidden type="text" name="SortOrder" value="@Model.CurrentSort" />
+            <input hidden type="text" name="CurrentFilter" value="@Model.CurrentFilter" />
         </div>
         <p>
             <input type="submit" value="Search" class="btn btn-primary" /> |
@@ -22,58 +24,64 @@
     <thead>
         <tr>
             <th>
-                <a asp-action="Index" asp-route-sortOrder="@ViewData["NameSortParm"]">Graph Identifier</a>
+                <a asp-action="Sort" asp-route-sortOrder="@Model.NameSortParm">Graph Identifier</a>
             </th>
             <th>
-                <a asp-action="Index" asp-route-sortOrder="@ViewData["GraphNameSortParm"]">Name</a>
+                <a asp-action="Sort" asp-route-sortOrder="@Model.GraphNameSortParm">Name</a>
             </th>
             <th>
-                <a asp-action="Index" asp-route-sortOrder="@ViewData["DateSortParm"]">Date Created</a>
+                <a asp-action="Sort" asp-route-sortOrder="@Model.DateSortParm">Date Created</a>
+            </th>
+            <th>
+                <a asp-action="Sort" asp-route-sortOrder="@Model.IsPublicParm">IsPublic</a>
             </th>
             <th>Actions</th>
         </tr>
     </thead>
     <tbody>
-        @foreach (var item in Model)
+        @foreach (var item in Model.PageList)
         {
-            <tr>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Name)
-                </td>
-                <th>
-                    @Html.DisplayFor(modelItem => item.ReadableName)
-                </th>
-                <th>
-                    @Html.DisplayFor(modelItem => item.DateCreated)
-                </th>
-                <td>
-                    <a asp-controller="Links" asp-action="Index" asp-route-currentGraphId="@item.Id">View Links</a> |
-                    <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                    <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                    <a asp-action="Delete" asp-route-id="@item.Id">Delete</a> |
-                    <a target="_blank" rel="noopener noreferrer" href="@item.GraphLinkURL">View Graph</a>
-                </td>
-            </tr>
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Name)
+            </td>
+            <th>
+                @Html.DisplayFor(modelItem => item.ReadableName)
+            </th>
+            <th>
+                @Html.DisplayFor(modelItem => item.DateCreated)
+            </th>
+            <th>
+                @Html.DisplayFor(modelItem => item.IsPublic)
+            </th>
+            <td>
+                <a asp-controller="Links" asp-action="Index" asp-route-currentGraphId="@item.Id">View Links</a> |
+                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a> |
+                <a target="_blank" rel="noopener noreferrer" href="@item.GraphLinkURL">View Graph</a>
+            </td>
+        </tr>
         }
     </tbody>
 </table>
 
 @{
-    var prevDisabled = !Model.HasPreviousPage ? "disabled" : "";
-    var nextDisabled = !Model.HasNextPage ? "disabled" : "";
+    var prevDisabled = !Model.PageList.HasPreviousPage ? "disabled" : "";
+    var nextDisabled = !Model.PageList.HasNextPage ? "disabled" : "";
 }
 
-<a asp-action="Index"
-   asp-route-sortOrder="@ViewData["CurrentSort"]"
-   asp-route-pageNumber="@(Model.PageIndex - 1)"
-   asp-route-currentFilter="@ViewData["CurrentFilter"]"
+<a asp-action="Sort"
+   asp-route-sortOrder="@Model.CurrentSort"
+   asp-route-pageNumber="@(Model.PageList.PageIndex - 1)"
+   asp-route-currentFilter="@Model.CurrentFilter"
    class="btn btn-primary @prevDisabled">
     Previous
 </a>
-<a asp-action="Index"
-   asp-route-sortOrder="@ViewData["CurrentSort"]"
-   asp-route-pageNumber="@(Model.PageIndex + 1)"
-   asp-route-currentFilter="@ViewData["CurrentFilter"]"
+<a asp-action="Sort"
+   asp-route-sortOrder="@Model.CurrentSort"
+   asp-route-pageNumber="@(Model.PageList.PageIndex + 1)"
+   asp-route-currentFilter="@Model.CurrentFilter"
    class="btn btn-primary @nextDisabled">
     Next
 </a>

@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Authorization;
 using DGMLD3.Data.CONTEXT;
 using DGMLD3.Data.RDMS;
 using DGMLD3.Data.VIEW;
+using Microsoft.AspNetCore.Identity;
 
 namespace DGMLD3.Controllers
 {
@@ -14,19 +15,39 @@ namespace DGMLD3.Controllers
     public class GraphsController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly UserManager<ApplicationUser> _userManager;
 
-        public GraphsController(ApplicationDbContext context)
+        public GraphsController(ApplicationDbContext context, UserManager<ApplicationUser> userManager)
         {
             _context = context;
+            _userManager = userManager;
         }
 
         // GET: Graphs
-        public async Task<IActionResult> Index(string sortOrder, string currentFilter, string searchString, int? pageNumber)
+        public async Task<IActionResult> Index(int? pageNumber)
         {
-            ViewData["NameSortParm"] = String.IsNullOrEmpty(sortOrder) ? "name_desc" : "name_asc";
-            ViewData["GraphNameSortParm"] = String.IsNullOrEmpty(sortOrder) ? "g_name_desc" : "g_name_asc";
-            ViewData["DateSortParm"] = String.IsNullOrEmpty(sortOrder) ? "date_desc" : "date_asc";
-            
+            GraphTableViewModel view = new GraphTableViewModel();
+
+            var user = await _userManager.GetUserAsync(HttpContext.User);
+            var graphs = from s in _context.Graphs where s.Creator.Id.Equals(user.Id) select s;
+
+            int pageSize = 10;
+            view.PageList = PaginatedList<Graph>.Create(graphs.AsNoTracking(), pageNumber ?? 1, pageSize);
+            return View(view);
+        }
+
+        public async Task<IActionResult> Sort(string sortOrder, string currentFilter, string searchString, int? pageNumber)
+        {
+            GraphTableViewModel view = new GraphTableViewModel();
+            if (!String.IsNullOrEmpty(sortOrder))
+            {
+                view.NameSortParm = sortOrder.Equals("name_desc") ? "name_asc" : "name_desc";
+                view.GraphNameSortParm = sortOrder.Equals("g_name_desc") ? "g_name_asc" : "g_name_desc";
+                view.DateSortParm = sortOrder.Equals("date_desc") ? "date_asc" : "date_desc";
+                view.IsPublicParm = sortOrder.Equals("ispublic_desc") ? "ispublic_asc" : "ispublic_desc";
+            }
+           
+
             if (searchString != null)
             {
                 pageNumber = 1;
@@ -36,9 +57,9 @@ namespace DGMLD3.Controllers
                 searchString = currentFilter;
             }
 
-            ViewData["SearchFilter"] = searchString;
-
-            var graphs = from s in _context.Graphs select s;
+            view.SearchString = searchString;
+            var user = await _userManager.GetUserAsync(HttpContext.User);
+            var graphs = from s in _context.Graphs where s.Creator.Id.Equals(user.Id) select s;
 
             if (!String.IsNullOrEmpty(searchString))
             {
@@ -53,11 +74,14 @@ namespace DGMLD3.Controllers
                 "g_name_desc" => graphs.OrderByDescending(s => s.ReadableName),
                 "g_name_asc" => graphs.OrderBy(s => s.ReadableName),
                 "date_desc" => graphs.OrderByDescending(s => s.DateCreated),
-                "date_asc" => graphs.OrderByDescending(s => s.DateCreated),
+                "date_asc" => graphs.OrderBy(s => s.DateCreated),
+                "ispublic_desc" => graphs.OrderBy(s => s.IsPublic),
+                "ispublic_asc" => graphs.OrderByDescending(s => s.IsPublic),
                 _ => graphs.OrderBy(s => s.Name),
             };
             int pageSize = 10;
-            return View(PaginatedList<Graph>.Create(graphs.AsNoTracking(), pageNumber ?? 1, pageSize));
+            view.PageList = PaginatedList<Graph>.Create(graphs.AsNoTracking(), pageNumber ?? 1, pageSize);
+            return View("Index",view);
         }
 
         // GET: Graphs/Details/5
