@@ -92,7 +92,7 @@ namespace DGMLD3.Areas.Identity.Pages.Account
                 ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
                 if (ModelState.IsValid)
                 {
-                    var plan = _context.PricePlans.Where(x => x.Id == 0).FirstOrDefault();
+                    var plan = _context.PricePlans.Where(x => x.Id == Int32.Parse(Input.Plan_Type_Id)).FirstOrDefault();
                     if (plan == null) return Page();
                     var user = new ApplicationUser { UserName = Input.Email, Email = Input.Email };
                     var result = await _userManager.CreateAsync(user, Input.Password);
@@ -100,27 +100,12 @@ namespace DGMLD3.Areas.Identity.Pages.Account
                     {
                         _logger.LogInformation("User created a new account with password.");
 
-                        var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-                        code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
-                        var callbackUrl = Url.Page(
-                            "/Account/ConfirmEmail",
-                            pageHandler: null,
-                            values: new { area = "Identity", userId = user.Id, code },
-                            protocol: Request.Scheme);
+                        user.Plan = plan;
 
-                        await _emailSender.SendEmailAsync(Input.Email, "Confirm your email",
-                            $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
+                        await _context.SaveChangesAsync();
+                        await _signInManager.SignInAsync(user, isPersistent: false);
 
-                        if (_userManager.Options.SignIn.RequireConfirmedAccount)
-                        {
-                            return RedirectToPage("RegisterConfirmation", new { email = Input.Email });
-                        }
-                        else
-                        {
-                            await _signInManager.SignInAsync(user, isPersistent: false);
-
-                            return LocalRedirect(returnUrl);
-                        }
+                        return LocalRedirect(returnUrl);
                     }
                     foreach (var error in result.Errors)
                     {

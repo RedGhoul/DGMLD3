@@ -10,7 +10,7 @@ using DGMLD3.Data.VIEW;
 
 namespace DGMLD3.Controllers
 {
-    [Authorize(Roles = "Admin")]
+    [Authorize]
     public class GraphsController : Controller
     {
         private readonly ApplicationDbContext _context;
