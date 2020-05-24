@@ -10,6 +10,7 @@ using DGMLD3.Data.DTO;
 using DGMLD3.Data.RDMS;
 using DGMLD3.Data.VIEW;
 using DGMLD3.Services;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -22,10 +23,12 @@ namespace DGMLD3.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly GraphRedisService _graphRedisService;
-        public DGMLController(ApplicationDbContext context, GraphRedisService graphRedisService)
+        private readonly UserManager<ApplicationUser> _userManager;
+        public DGMLController(ApplicationDbContext context, GraphRedisService graphRedisService, UserManager<ApplicationUser> userManager)
         {
             _context = context;
             _graphRedisService = graphRedisService;
+            _userManager = userManager;
         }
         public IActionResult Upload()
         {
@@ -47,8 +50,10 @@ namespace DGMLD3.Controllers
 
                     Graph newGraph = GraphMapperService.MapToNewGraphInDB(nodes, links);
                     newGraph.ReadableName = model.GraphName;
-                    string LINK_URL = "https://" + Request.Host.Value + "/DGML/ViewNetwork?graphName=" + newGraph.Name;
+                    string LINK_URL = "/DGML/ViewNetwork?graphName=" + newGraph.Name;
                     newGraph.GraphLinkURL = LINK_URL;
+                    var user = await _userManager.GetUserAsync(HttpContext.User);
+                    newGraph.Creator = user;
                     _context.Graphs.Add(newGraph);
                     await _context.SaveChangesAsync();
 
@@ -58,9 +63,9 @@ namespace DGMLD3.Controllers
                     ViewBag.NODES = NODES;
                     ViewBag.LINKS = LINKS;
 
-                    await _graphRedisService.SaveGraphToCache(newGraph);
+                    //await _graphRedisService.SaveGraphToCache(newGraph);
 
-                    ViewBag.LINK_URL = LINK_URL;
+                    ViewBag.LINK_URL = "https://" + Request.Host.Value + LINK_URL;
                 }
                 catch (Exception error)
                 {
@@ -86,7 +91,7 @@ namespace DGMLD3.Controllers
         {
             var graph = await _context.Graphs.Where(x => x.Name.Equals(graphName)).FirstOrDefaultAsync();
             ViewBag.Graph_ID = graph.Id;
-            ViewBag.LINK_URL = graph.GraphLinkURL;
+            ViewBag.LINK_URL = "https://" + Request.Host.Value + graph.GraphLinkURL;
 
             Graph fullGraph = await _context.Graphs.Where(x => x.Name.Equals(graphName)).FirstOrDefaultAsync();
             (List<GraphNodeDTO> nodes, List<GraphLinkDTO> links) = GraphMapperService.MapGraphToDTOs(fullGraph);

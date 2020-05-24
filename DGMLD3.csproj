@@ -10,6 +10,8 @@
   <ItemGroup>
     <Compile Remove="Migrations\20200423020009_addedIsPublicToGraph.cs" />
     <Compile Remove="Migrations\20200423020009_addedIsPublicToGraph.Designer.cs" />
+    <Compile Remove="Migrations\20200524150703_LinkedUserAndGraph.cs" />
+    <Compile Remove="Migrations\20200524150703_LinkedUserAndGraph.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>
