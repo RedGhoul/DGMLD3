@@ -85,7 +85,7 @@ namespace DGMLD3.Controllers
         public async Task<IActionResult> ViewNetwork([FromQuery]string graphName)
         {
             var graph = await _context.Graphs.Where(x => x.Name.Equals(graphName)).FirstOrDefaultAsync();
-          
+            ViewBag.Graph_ID = graph.Id;
             ViewBag.LINK_URL = graph.GraphLinkURL;
 
             var (Links,Nodes) = await _graphRedisService.GetGraphFromCache(graphName);

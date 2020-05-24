@@ -369,7 +369,7 @@ namespace DGMLD3.QuickType.CodeMapConversion
 
     public enum DataVirtualized { False, True };
 
-    public enum Icon { CodeMapProject, CodeMapSolutionFolder, CodeSchemaAssembly, CodeSchemaClass, CodeSchemaEnum, CodeSchemaField, CodeSchemaInterface, CodeSchemaMethod, CodeSchemaNamespace, CodeSchemaProperty, Externals, File };
+    public enum Icon { CodeMapProject, CodeMapSolutionFolder, CodeSchemaAssembly, CodeSchemaClass, CodeSchemaEnum, CodeSchemaField, CodeSchemaInterface, CodeSchemaMethod, CodeSchemaNamespace, CodeSchemaProperty, Externals, File, CodeStruct };
 
     public enum Category { CodeMapExternalReference, CodeMapProjectReference, CodeSchemaAttributeUse, CodeSchemaCalls, CodeSchemaFieldRead, CodeSchemaFieldWrite, CodeSchemaFunctionPointer, CodeSchemaReturnTypeLink, Contains, Implements, InheritsFrom, References };
 
@@ -531,6 +531,7 @@ namespace DGMLD3.QuickType.CodeMapConversion
                 "CodeSchema_Method" => Icon.CodeSchemaMethod,
                 "CodeSchema_Namespace" => Icon.CodeSchemaNamespace,
                 "CodeSchema_Property" => Icon.CodeSchemaProperty,
+                "CodeSchema_Struct" => Icon.CodeStruct,
                 "Externals" => Icon.Externals,
                 "File" => Icon.File,
                 _ => throw new Exception("Cannot unmarshal type Icon"),

@@ -19,5 +19,6 @@ namespace DGMLD3.Data.RDMS
         public DateTime DateCreated { get; set; }
         public string GraphLinkURL { get; set; }
         public bool IsPublic { get; set; }
+        public string SVG { get; set; }
     }
 }
