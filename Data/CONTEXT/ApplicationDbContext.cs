@@ -31,6 +31,14 @@ namespace DGMLD3.Data.CONTEXT
             builder.Entity<PricePlan>()
               .HasMany(c => c.Users)
               .WithOne(e => e.Plan);
+
+            builder.Entity<Graph>()
+               .Property(b => b.Nodes)
+               .HasColumnType("jsonb");
+
+            builder.Entity<Graph>()
+               .Property(b => b.Links)
+               .HasColumnType("jsonb");
         }
     }
 }

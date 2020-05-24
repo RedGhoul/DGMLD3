@@ -57,7 +57,7 @@ namespace DGMLD3.Controllers
                 _ => graphs.OrderBy(s => s.Name),
             };
             int pageSize = 10;
-            return View(await PaginatedList<Graph>.CreateAsync(graphs.AsNoTracking(), pageNumber ?? 1, pageSize));
+            return View(PaginatedList<Graph>.Create(graphs.AsNoTracking(), pageNumber ?? 1, pageSize));
         }
 
         // GET: Graphs/Details/5

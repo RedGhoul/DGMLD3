@@ -88,21 +88,10 @@ namespace DGMLD3.Controllers
             ViewBag.Graph_ID = graph.Id;
             ViewBag.LINK_URL = graph.GraphLinkURL;
 
-            var (Links,Nodes) = await _graphRedisService.GetGraphFromCache(graphName);
-            if (!string.IsNullOrEmpty(Links) && !string.IsNullOrEmpty(Nodes))
-            {
-                ViewBag.NODES = Nodes;
-                ViewBag.LINKS = Links;
-            }
-            else
-            {
-                Graph fullGraph = await _context.Graphs.Where(x => x.Name.Equals(graphName)).Include(x => x.Links).
-                   Include(x => x.Nodes).
-                   FirstOrDefaultAsync();
-                (List<GraphNodeDTO> nodes, List<GraphLinkDTO> links) = GraphMapperService.MapGraphToDTOs(fullGraph);
-                ViewBag.NODES = JsonConvert.SerializeObject(nodes);
-                ViewBag.LINKS = JsonConvert.SerializeObject(links);
-            }
+            Graph fullGraph = await _context.Graphs.Where(x => x.Name.Equals(graphName)).FirstOrDefaultAsync();
+            (List<GraphNodeDTO> nodes, List<GraphLinkDTO> links) = GraphMapperService.MapGraphToDTOs(fullGraph);
+            ViewBag.NODES = JsonConvert.SerializeObject(nodes);
+            ViewBag.LINKS = JsonConvert.SerializeObject(links);
             return View("Network");
 
         }
