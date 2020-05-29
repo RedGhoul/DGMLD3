@@ -86,7 +86,6 @@ namespace DGMLD3.Controllers
 
 
         [HttpGet]
-        [ResponseCache(Duration = 30)]
         public async Task<IActionResult> ViewNetwork([FromQuery]string graphName)
         {
             var graph = await _context.Graphs.Where(x => x.Name.Equals(graphName)).FirstOrDefaultAsync();
