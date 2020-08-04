@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Sentry;
 using Serilog;
 using Serilog.Configuration;
 using Serilog.Sinks.Elasticsearch;
@@ -29,31 +30,35 @@ namespace DGMLD3
             {
                 Console.WriteLine(e);
             }
-
-            Log.Logger = new LoggerConfiguration()
+            using (SentrySdk.Init(Secrets.GetConnectionString(configuration, "Sentry_URL")))
+            {
+                Log.Logger = new LoggerConfiguration()
                 .Enrich.FromLogContext()
                  .WriteTo.Elasticsearch(new ElasticsearchSinkOptions(new Uri($"{Secrets.GetConnectionString(configuration, "Log_ElasticIndexBaseUrl")}"))
                  {
                      AutoRegisterTemplate = true,
-                     ModifyConnectionSettings = x => x.BasicAuthentication(Secrets.GetAppSettingsValue(configuration, "elastic_name"), Secrets.GetAppSettingsValue(configuration, "elastic_pasword")),
+                     ModifyConnectionSettings = x => x.BasicAuthentication(Secrets.GetAppSettingsValue(configuration, "elastic_name"),
+                     Secrets.GetAppSettingsValue(configuration, "elastic_pasword")),
                      AutoRegisterTemplateVersion = AutoRegisterTemplateVersion.ESv7,
                      IndexFormat = $"{Secrets.GetAppSettingsValue(configuration, "AppName")}" + "-{0:yyyy.MM}"
                  })
                 .CreateLogger();
 
-            try
-            {
-                Log.Information("Starting up");
-                CreateHostBuilder(args).Build().Run();
+                try
+                {
+                    Log.Information("Starting up");
+                    CreateHostBuilder(args).Build().Run();
+                }
+                catch (Exception ex)
+                {
+                    Log.Fatal(ex, "Application start-up failed");
+                }
+                finally
+                {
+                    Log.CloseAndFlush();
+                }
             }
-            catch (Exception ex)
-            {
-                Log.Fatal(ex, "Application start-up failed");
-            }
-            finally
-            {
-                Log.CloseAndFlush();
-            }
+
 
         }
 
