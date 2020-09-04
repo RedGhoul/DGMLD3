@@ -30,8 +30,8 @@ namespace DGMLD3
             {
                 Console.WriteLine(e);
             }
-            using (SentrySdk.Init(Secrets.GetConnectionString(configuration, "Sentry_URL")))
-            {
+            //using (SentrySdk.Init(Secrets.GetConnectionString(configuration, "Sentry_URL")))
+            //{
                 Log.Logger = new LoggerConfiguration()
                 .Enrich.FromLogContext()
                  .WriteTo.Elasticsearch(new ElasticsearchSinkOptions(new Uri($"{Secrets.GetConnectionString(configuration, "Log_ElasticIndexBaseUrl")}"))
@@ -57,7 +57,7 @@ namespace DGMLD3
                 {
                     Log.CloseAndFlush();
                 }
-            }
+            //}
 
 
         }
