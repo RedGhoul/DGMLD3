@@ -12,5 +12,6 @@ namespace DGMLD3.Data.VIEW
         public string GraphLink { get; set; }
         public List<Link> Links { get; set; }
         public string SearchString { get; set; } = "";
+        public int GraphId { get; internal set; }
     }
 }

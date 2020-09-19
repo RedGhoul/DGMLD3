@@ -47,7 +47,6 @@ namespace DGMLD3.Areas.Identity.Pages.Account
         public InputModel Input { get; set; }
 
         public string ReturnUrl { get; set; }
-        public List<SelectListItem> Plan_Types { get; set; }
         public IList<AuthenticationScheme> ExternalLogins { get; set; }
 
         public class InputModel
@@ -68,12 +67,10 @@ namespace DGMLD3.Areas.Identity.Pages.Account
             [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
             public string ConfirmPassword { get; set; }
 
-            public string Plan_Type_Id { get; set; }
         }
 
         public async Task<IActionResult> OnGetAsync(string returnUrl = null)
         {
-            GenerateSelectList();
             ReturnUrl = returnUrl;
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
             return Page();
@@ -81,26 +78,17 @@ namespace DGMLD3.Areas.Identity.Pages.Account
 
         public async Task<IActionResult> OnPostAsync(string returnUrl = null)
         {
-            GenerateSelectList();
-            if (Int32.Parse(Input.Plan_Type_Id) == 0)
-            {
-                ModelState.AddModelError(string.Empty, "Please select a plan");
-            }
-            else
-            {
+
                 returnUrl ??= Url.Content("~/");
                 ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
                 if (ModelState.IsValid)
                 {
-                    var plan = _context.PricePlans.Where(x => x.Id == Int32.Parse(Input.Plan_Type_Id)).FirstOrDefault();
-                    if (plan == null) return Page();
+                   
                     var user = new ApplicationUser { UserName = Input.Email, Email = Input.Email };
                     var result = await _userManager.CreateAsync(user, Input.Password);
                     if (result.Succeeded)
                     {
                         _logger.LogInformation("User created a new account with password.");
-
-                        user.Plan = plan;
                         user.EmailConfirmed = true;
                         await _context.SaveChangesAsync();
                         await _signInManager.SignInAsync(user, isPersistent: false);
@@ -112,30 +100,11 @@ namespace DGMLD3.Areas.Identity.Pages.Account
                         ModelState.AddModelError(string.Empty, error.Description);
                     }
                 }
-            }
-            
 
             // If we got this far, something failed, redisplay form
             return Page();
         }
 
-        private void GenerateSelectList()
-        {
-            Plan_Types = new List<SelectListItem>();
-            var plans = _context.PricePlans.Where(x => x.IsActive == true).ToArray();
-            Plan_Types.Add(new SelectListItem
-            {
-                Text = "Select Plan",
-                Value = 0.ToString(),
-            });
-            foreach (var item in plans)
-            {
-                Plan_Types.Add(new SelectListItem
-                {
-                    Text = item.Name,
-                    Value = item.Id.ToString(),
-                });
-            }
-        }
+       
     }
 }
