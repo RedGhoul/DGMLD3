@@ -24,65 +24,24 @@ namespace DGMLD3.Controllers
         }
 
         // GET: Graphs
-        public async Task<IActionResult> Index(int? pageNumber)
+        public async Task<IActionResult> Index()
         {
-            GraphTableViewModel view = new GraphTableViewModel();
-
-            var user = await _userManager.GetUserAsync(HttpContext.User);
-            var graphs = from s in _context.Graphs where s.Creator.Id.Equals(user.Id) select s;
-
-            int pageSize = 10;
-            view.PageList = PaginatedList<Graph>.Create(graphs.AsNoTracking(), pageNumber ?? 1, pageSize);
-            return View(view);
+            GraphTableViewModel vm = new GraphTableViewModel();
+            ApplicationUser user = await GetCurrentUser();
+            vm.Graphs = await _context.Graphs.Where(s => s.Creator.Id.Equals(user.Id)).ToListAsync();
+            return View(vm);
         }
 
-        public async Task<IActionResult> Sort(string sortOrder, string currentFilter, string searchString, int? pageNumber)
+        // GET: Graphs
+        public async Task<IActionResult> Search([FromQuery] string SearchString)
         {
-            GraphTableViewModel view = new GraphTableViewModel();
-            if (!String.IsNullOrEmpty(sortOrder))
-            {
-                view.NameSortParm = sortOrder.Equals("name_desc") ? "name_asc" : "name_desc";
-                view.GraphNameSortParm = sortOrder.Equals("g_name_desc") ? "g_name_asc" : "g_name_desc";
-                view.DateSortParm = sortOrder.Equals("date_desc") ? "date_asc" : "date_desc";
-                view.IsPublicParm = sortOrder.Equals("ispublic_desc") ? "ispublic_asc" : "ispublic_desc";
-            }
-           
-
-            if (searchString != null)
-            {
-                pageNumber = 1;
-            }
-            else
-            {
-                searchString = currentFilter;
-            }
-
-            view.SearchString = searchString;
-            var user = await _userManager.GetUserAsync(HttpContext.User);
-            var graphs = from s in _context.Graphs where s.Creator.Id.Equals(user.Id) select s;
-
-            if (!String.IsNullOrEmpty(searchString))
-            {
-                graphs = graphs.Where(s => s.Name.Contains(searchString)
-                                       || s.ReadableName.Contains(searchString));
-            }
-
-            graphs = sortOrder switch
-            {
-                "name_desc" => graphs.OrderByDescending(s => s.Name),
-                "name_asc" => graphs.OrderBy(s => s.Name),
-                "g_name_desc" => graphs.OrderByDescending(s => s.ReadableName),
-                "g_name_asc" => graphs.OrderBy(s => s.ReadableName),
-                "date_desc" => graphs.OrderByDescending(s => s.DateCreated),
-                "date_asc" => graphs.OrderBy(s => s.DateCreated),
-                "ispublic_desc" => graphs.OrderBy(s => s.IsPublic),
-                "ispublic_asc" => graphs.OrderByDescending(s => s.IsPublic),
-                _ => graphs.OrderBy(s => s.Name),
-            };
-            int pageSize = 10;
-            view.PageList = PaginatedList<Graph>.Create(graphs.AsNoTracking(), pageNumber ?? 1, pageSize);
-            return View("Index",view);
+            GraphTableViewModel vm = new GraphTableViewModel();
+            ApplicationUser user = await GetCurrentUser();
+            vm.Graphs = await _context.Graphs.Where(s => s.Creator.Id.Equals(user.Id)).ToListAsync();
+            return View(vm);
         }
+
+
 
         // GET: Graphs/Details/5
         public async Task<IActionResult> Details(int? id)
@@ -119,8 +78,6 @@ namespace DGMLD3.Controllers
         }
 
         // POST: Graphs/Edit/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,ReadableName,IsPublic")] Graph graph)
@@ -188,6 +145,11 @@ namespace DGMLD3.Controllers
         private bool GraphExists(int id)
         {
             return _context.Graphs.Any(e => e.Id == id);
+        }
+
+        private async Task<ApplicationUser> GetCurrentUser()
+        {
+            return await _userManager.GetUserAsync(HttpContext.User);
         }
     }
 }

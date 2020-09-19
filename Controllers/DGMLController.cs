@@ -30,13 +30,13 @@ namespace DGMLD3.Controllers
             _graphRedisService = graphRedisService;
             _userManager = userManager;
         }
+
         public IActionResult Upload()
         {
             UploadViewModel model = new UploadViewModel();
 
             return View(model);
         }
-
 
         [HttpPost] 
         public async Task<IActionResult> Upload(UploadViewModel model)

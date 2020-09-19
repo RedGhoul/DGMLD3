@@ -1,18 +1,16 @@
 ﻿@model GraphTableViewModel
-
+<link href="https://unpkg.com/jquery-resizable-columns@0.2.3/dist/jquery.resizableColumns.css" rel="stylesheet">
+<link href="https://unpkg.com/bootstrap-table@1.17.1/dist/bootstrap-table.min.css" rel="stylesheet">
 <h1>Your Graphs</h1>
 
 <p>
     <a class="btn btn-primary" asp-controller="DGML" asp-action="Upload">Create New</a>
 </p>
-<form asp-action="Sort" method="get">
+<form asp-action="Search" method="get">
     <div class="form-actions no-color">
         <div class="form-group">
             <label for="SearchString">Search:</label>
-
             <input type="text" name="SearchString" class="form-control" value="@Model.SearchString" />
-            <input hidden type="text" name="SortOrder" value="@Model.CurrentSort" />
-            <input hidden type="text" name="CurrentFilter" value="@Model.CurrentFilter" />
         </div>
         <p>
             <input type="submit" value="Search" class="btn btn-primary" /> |
@@ -20,68 +18,70 @@
         </p>
     </div>
 </form>
-<table class="table">
+<table id="table"
+       data-toggle="table"
+       data-height="700"
+       data-pagination="true"
+       class="table">
     <thead>
         <tr>
-            <th>
-                <a asp-action="Sort" asp-route-sortOrder="@Model.NameSortParm">Graph Identifier</a>
+            <th data-field="ReadableName" data-sortable="true">
+                Name
             </th>
-            <th>
-                <a asp-action="Sort" asp-route-sortOrder="@Model.GraphNameSortParm">Name</a>
+            <th data-field="DateCreated" data-sortable="true">
+                Date Created
             </th>
-            <th>
-                <a asp-action="Sort" asp-route-sortOrder="@Model.DateSortParm">Date Created</a>
+            <th data-field="IsPublic" data-sortable="true">
+                Is Public
             </th>
-            <th>
-                <a asp-action="Sort" asp-route-sortOrder="@Model.IsPublicParm">IsPublic</a>
+            <th data-field="GraphLinkURL">
+                Link
             </th>
             <th>Actions</th>
         </tr>
     </thead>
     <tbody>
-        @foreach (var item in Model.PageList)
+        @for (int i = 0; i < Model.Graphs.Count(); i++)
         {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Name)
-            </td>
-            <th>
-                @Html.DisplayFor(modelItem => item.ReadableName)
-            </th>
-            <th>
-                @Html.DisplayFor(modelItem => item.DateCreated)
-            </th>
-            <th>
-                @Html.DisplayFor(modelItem => item.IsPublic)
-            </th>
-            <td>
-                <a asp-controller="Links" asp-action="Index" asp-route-currentGraphId="@item.Id">View Links</a> |
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a> |
-                <a target="_blank" rel="noopener noreferrer" href="@item.GraphLinkURL">View Graph</a>
-            </td>
-        </tr>
+            <tr id="tr-id-@i" class="tr-class-@i" data-title="bootstrap table" data-object='{"key": "value"}'>
+                <td id="td-id-@i" class="td-class-@i" data-title="bootstrap table">
+                    <a asp-controller="Links" asp-action="Index" asp-route-currentGraphId="@Model.Graphs[i].Id">@Html.DisplayFor(modelItem => Model.Graphs[i].ReadableName)</a>
+                </td>
+                <th>
+                    @Html.DisplayFor(modelItem => Model.Graphs[i].DateCreated)
+                </th>
+                <th>
+                    @if (Model.Graphs[i].IsPublic)
+                    {
+                        <i class="fas fa-check fa-3x" style="color:green;"></i>
+                    }
+                    else
+                    {
+                        <i class="far fa-times-circle fa-3x" style="color:red;"></i>
+                    }
+                   
+                </th>
+                <th>
+                    <a target="_blank" rel="noopener noreferrer" href="@Model.Graphs[i].GraphLinkURL">View Graph</a>
+                </th>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@Model.Graphs[i].Id">Edit</a> |
+                    <a asp-action="Details" asp-route-id="@Model.Graphs[i].Id">Details</a> |
+                    <a asp-action="Delete" asp-route-id="@Model.Graphs[i].Id">Delete</a> 
+                </td>
+            </tr>
         }
+
     </tbody>
 </table>
+@section Scripts{
 
-@{
-    var prevDisabled = !Model.PageList.HasPreviousPage ? "disabled" : "";
-    var nextDisabled = !Model.PageList.HasNextPage ? "disabled" : "";
+    <script src="https://unpkg.com/jquery-resizable-columns@0.2.3/dist/jquery.resizableColumns.min.js"></script>
+    <script src="https://unpkg.com/bootstrap-table@1.17.1/dist/bootstrap-table.min.js"></script>
+    <script src="https://unpkg.com/bootstrap-table@1.17.1/dist/extensions/resizable/bootstrap-table-resizable.min.js"></script>
+    <script>
+        $(function () {
+            $('#table').bootstrapTable()
+        })
+    </script>
 }
-
-<a asp-action="Sort"
-   asp-route-sortOrder="@Model.CurrentSort"
-   asp-route-pageNumber="@(Model.PageList.PageIndex - 1)"
-   asp-route-currentFilter="@Model.CurrentFilter"
-   class="btn btn-primary @prevDisabled">
-    Previous
-</a>
-<a asp-action="Sort"
-   asp-route-sortOrder="@Model.CurrentSort"
-   asp-route-pageNumber="@(Model.PageList.PageIndex + 1)"
-   asp-route-currentFilter="@Model.CurrentFilter"
-   class="btn btn-primary @nextDisabled">
-    Next
-</a>
