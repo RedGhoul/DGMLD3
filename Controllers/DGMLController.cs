@@ -19,16 +19,15 @@ using Newtonsoft.Json;
 
 namespace DGMLD3.Controllers
 {
-    public class DGMLController : Controller
+    public class DGMLController : BaseController
     {
-        private readonly ApplicationDbContext _context;
         private readonly GraphRedisService _graphRedisService;
-        private readonly UserManager<ApplicationUser> _userManager;
-        public DGMLController(ApplicationDbContext context, GraphRedisService graphRedisService, UserManager<ApplicationUser> userManager)
+
+        public DGMLController(ApplicationDbContext context, 
+            GraphRedisService graphRedisService, UserManager<ApplicationUser> userManager)
+            :base(context, userManager)
         {
-            _context = context;
             _graphRedisService = graphRedisService;
-            _userManager = userManager;
         }
 
         public IActionResult Upload()

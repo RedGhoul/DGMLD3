@@ -1,86 +1,62 @@
-﻿@model PaginatedList<Link>
-
-
-
-@{ 
-    var PlaceHolderValue = "";
-    if (string.IsNullOrEmpty((string)ViewBag.PlaceHolderSearch))
-    {
-        PlaceHolderValue = "Enter your search";
-    }
-    else
-    {
-        PlaceHolderValue = ViewBag.PlaceHolderSearch;
-    }
-
-}
-<h3>Links for Graph: @ViewBag.GraphName</h3>
+﻿@model LinkTableViewModel
+<link href="https://unpkg.com/jquery-resizable-columns@0.2.3/dist/jquery.resizableColumns.css" rel="stylesheet">
+<link href="https://unpkg.com/bootstrap-table@1.17.1/dist/bootstrap-table.min.css" rel="stylesheet">
+<h3>Links for Graph: @Model.GraphName</h3>
 
 <p>
     <a class="btn btn-primary" asp-controller="Graphs" asp-action="Index">Back To Graphs</a>
-    <a class="btn btn-primary" target="_blank" rel="noopener noreferrer" href="@ViewBag.GraphURL">View Graph</a>
+    <a class="btn btn-primary" target="_blank" rel="noopener noreferrer" href="@Model.GraphLink">View Graph</a>
 </p>
-<form asp-action="Index"  asp-route-currentGraphId="@ViewData["CurrentGraphId"]" method="post">
+<form asp-action="Search" asp-route-currentGraphId="@Model.GraphId" method="get">
     <div class="form-actions no-color">
         <div class="form-group">
             <label for="SearchString">Search:</label>
-            <input type="text" name="SearchString" class="form-control" value="@ViewData["SearchFilter"]" placeholder="@PlaceHolderValue"/>
+            <input type="text" name="SearchString" class="form-control" placeholder="" />
         </div>
         <p>
             <input type="submit" value="Search" class="btn btn-primary" /> |
-            <a class="btn btn-primary" asp-action="Index" asp-route-currentGraphId="@ViewData["CurrentGraphId"]">Back to Full List</a>
+            <a class="btn btn-primary" asp-action="Index" asp-route-currentGraphId="@Model.GraphId">Back to Full List</a>
         </p>
     </div>
 </form>
-<table class="table">
+<table id="table"
+       data-toggle="table"
+       data-height="700"
+       data-pagination="true"
+       data-page-size="25"
+       class="table">
     <thead>
         <tr>
-            <th>
-                <a asp-action="Index" asp-route-sortOrder="@ViewData["TargetSortParm"]" asp-route-currentGraphId="@ViewData["CurrentGraphId"]">Target</a>
+            <th data-field="source" data-sortable="true">
+                Source Link Name
             </th>
-            <th>
-                <a asp-action="Index" asp-route-sortOrder="@ViewData["SourceSortParm"]" asp-route-currentGraphId="@ViewData["CurrentGraphId"]">Source</a>
+            <th data-field="target" data-sortable="true">
+                Target Link Name
             </th>
-            <th>Actions</th>
         </tr>
     </thead>
     <tbody>
-        @foreach (var item in Model)
+        @for (int i = 0; i < Model.Links.Count(); i++)
         {
-            <tr>
-                <td>
-                    @Html.DisplayFor(modelItem => item.target)
+            <tr id="tr-id-@i" class="tr-class-@i" data-title="bootstrap table" data-object='{"key": "value"}'>
+                <td id="td-id-@i" class="td-class-@i" data-title="bootstrap table">
+                    @Html.DisplayFor(model => model.Links[i].target)
                 </td>
                 <th>
-                    @Html.DisplayFor(modelItem => item.source)
+                    @Html.DisplayFor(model => model.Links[i].source)
                 </th>
-                <td>
-                    <a asp-action="Details" asp-route-LinkId="@item.Id" asp-route-GraphId="@ViewData["CurrentGraphId"]">Details</a>
-                </td>
             </tr>
         }
     </tbody>
 </table>
+@section Scripts{
 
-@{
-    var prevDisabled = !Model.HasPreviousPage ? "disabled" : "";
-    var nextDisabled = !Model.HasNextPage ? "disabled" : "";
+    <script src="https://unpkg.com/jquery-resizable-columns@0.2.3/dist/jquery.resizableColumns.min.js"></script>
+    <script src="https://unpkg.com/bootstrap-table@1.17.1/dist/bootstrap-table.min.js"></script>
+    <script src="https://unpkg.com/bootstrap-table@1.17.1/dist/extensions/resizable/bootstrap-table-resizable.min.js"></script>
+    <script>
+        $(function () {
+            $('#table').bootstrapTable()
+        })
+    </script>
 }
-
-<a asp-action="Index"
-   asp-route-sortOrder="@ViewData["CurrentSort"]"
-   asp-route-pageNumber="@(Model.PageIndex - 1)"
-   asp-route-currentFilter="@ViewData["CurrentFilter"]"
-   asp-route-currentGraphId="@ViewData["CurrentGraphId"]"
-   class="btn btn-primary @prevDisabled">
-    Previous
-</a>
-<a asp-action="Index"
-   asp-route-sortOrder="@ViewData["CurrentSort"]"
-   asp-route-pageNumber="@(Model.PageIndex + 1)"
-   asp-route-currentFilter="@ViewData["CurrentFilter"]"
-   asp-route-currentGraphId="@ViewData["CurrentGraphId"]"
-   class="btn btn-primary @nextDisabled">
-    Next
-</a>
-

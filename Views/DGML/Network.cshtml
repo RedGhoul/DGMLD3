@@ -35,11 +35,9 @@
 
     </div>
 </div>
-
 @section Scripts {
-<script src="https://d3js.org/d3.v4.min.js"></script>
-<script>
-    // Feel free to change or delete any of the code you see in this editor!
+    <script src="https://d3js.org/d3.v4.min.js"></script>
+    <script>
     let width = screen.width-100;
     let height = screen.height-100;
     let svg = d3.select("#graph").append("svg")
@@ -181,7 +179,7 @@
 
         text
             .attr("transform", function (d) { return "translate(" + d.x + 8 + "," + d.y + 8 + ")"; });
-    }
+        }
 
     $.ajax({
         headers: {
@@ -202,6 +200,6 @@
         },
 
     });
-   
-</script>
+
+    </script>
 }

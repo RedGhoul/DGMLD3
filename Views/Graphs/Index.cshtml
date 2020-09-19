@@ -34,8 +34,11 @@
             <th data-field="IsPublic" data-sortable="true">
                 Is Public
             </th>
+            <th data-field="">
+                Link To Graph Links
+            </th>
             <th data-field="GraphLinkURL">
-                Link
+                Link To Graph
             </th>
             <th>Actions</th>
         </tr>
@@ -45,7 +48,7 @@
         {
             <tr id="tr-id-@i" class="tr-class-@i" data-title="bootstrap table" data-object='{"key": "value"}'>
                 <td id="td-id-@i" class="td-class-@i" data-title="bootstrap table">
-                    <a asp-controller="Links" asp-action="Index" asp-route-currentGraphId="@Model.Graphs[i].Id">@Html.DisplayFor(modelItem => Model.Graphs[i].ReadableName)</a>
+                    @Html.DisplayFor(modelItem => Model.Graphs[i].ReadableName)
                 </td>
                 <th>
                     @Html.DisplayFor(modelItem => Model.Graphs[i].DateCreated)
@@ -60,6 +63,9 @@
                         <i class="far fa-times-circle fa-3x" style="color:red;"></i>
                     }
                    
+                </th>
+                <th>
+                    <a asp-controller="Links" asp-action="Index" asp-route-currentGraphId="@Model.Graphs[i].Id">Link to Graph Links</a>
                 </th>
                 <th>
                     <a target="_blank" rel="noopener noreferrer" href="@Model.Graphs[i].GraphLinkURL">View Graph</a>

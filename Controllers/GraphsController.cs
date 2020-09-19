@@ -12,15 +12,11 @@ using Microsoft.AspNetCore.Identity;
 namespace DGMLD3.Controllers
 {
     [Authorize]
-    public class GraphsController : Controller
+    public class GraphsController : BaseController
     {
-        private readonly ApplicationDbContext _context;
-        private readonly UserManager<ApplicationUser> _userManager;
-
-        public GraphsController(ApplicationDbContext context, UserManager<ApplicationUser> userManager)
+       
+        public GraphsController(ApplicationDbContext context, UserManager<ApplicationUser> userManager):base(context, userManager)
         {
-            _context = context;
-            _userManager = userManager;
         }
 
         // GET: Graphs
@@ -145,11 +141,6 @@ namespace DGMLD3.Controllers
         private bool GraphExists(int id)
         {
             return _context.Graphs.Any(e => e.Id == id);
-        }
-
-        private async Task<ApplicationUser> GetCurrentUser()
-        {
-            return await _userManager.GetUserAsync(HttpContext.User);
         }
     }
 }
