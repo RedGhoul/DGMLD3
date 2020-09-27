@@ -8,7 +8,7 @@ Try here: https://www.dgmlconverter.net/DGML/Upload
 
 ### Tech Used:
 
-#### Lanagues
+#### Languages
 
 - C# .Net Core 3.1 - ASP.NET MVC
 - JavaScript - JQuery - D3.JS
