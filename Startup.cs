@@ -49,8 +49,9 @@ namespace DGMLD3
             services.AddSingleton<GraphRedisService, GraphRedisService>();
 
             services.AddControllersWithViews();
-            
-            
+            services.AddRazorPages()
+        .AddRazorRuntimeCompilation();
+
             services.AddResponseCaching();
             services.AddResponseCompression();
             services.AddTransient<UserManager<ApplicationUser>>();
