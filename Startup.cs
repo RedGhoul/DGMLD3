@@ -49,20 +49,13 @@ namespace DGMLD3
             services.AddSingleton<GraphRedisService, GraphRedisService>();
 
             services.AddControllersWithViews();
-
-            if (Secrets.GetAppSettingsValue(Configuration, "ENV").Equals("DEBUG"))
-            {
-                services.AddRazorPages().AddRazorRuntimeCompilation();
-            }
-            else
-            {
-                services.AddRazorPages();
-            }
-
+            
+            
             services.AddResponseCaching();
             services.AddResponseCompression();
             services.AddTransient<UserManager<ApplicationUser>>();
             services.AddTransient<RoleManager<IdentityRole>>();
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -71,7 +64,6 @@ namespace DGMLD3
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
-                app.UseDatabaseErrorPage();
             }
             else
             {
@@ -95,7 +87,6 @@ namespace DGMLD3
                     pattern: "{controller=Home}/{action=Index}/{id?}");
                 endpoints.MapRazorPages();
             });
-            //await CreateUserRoles(app);
         }
 
         private async Task CreateUserRoles(IApplicationBuilder app)

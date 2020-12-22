@@ -5,21 +5,122 @@ using DGMLD3.Data.CONTEXT;
 using DGMLD3.Data.RDMS;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace DGMLD3.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20201025231926_CorvPro")]
+    partial class CorvPro
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .UseSerialColumns()
-                .HasAnnotation("Relational:MaxIdentifierLength", 63)
-                .HasAnnotation("ProductVersion", "5.0.1");
+                .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.SerialColumn)
+                .HasAnnotation("ProductVersion", "3.1.9")
+                .HasAnnotation("Relational:MaxIdentifierLength", 63);
+
+            modelBuilder.Entity("Coravel.Pro.EntityFramework.CoravelJobHistory", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.SerialColumn);
+
+                    b.Property<string>("DisplayName")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime?>("EndedAt")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("ErrorMessage")
+                        .HasColumnType("text");
+
+                    b.Property<bool>("Failed")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("StackTrace")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime?>("StartedAt")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("TypeFullPath")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Coravel_JobHistory");
+                });
+
+            modelBuilder.Entity("Coravel.Pro.EntityFramework.CoravelScheduledJob", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.SerialColumn);
+
+                    b.Property<bool>("Active")
+                        .HasColumnType("boolean");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("CronExpression")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Days")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Frequency")
+                        .HasColumnType("text");
+
+                    b.Property<string>("InvocableFullPath")
+                        .HasColumnType("text");
+
+                    b.Property<bool>("PreventOverlapping")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("TimeZoneInfo")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Coravel_ScheduledJobs");
+                });
+
+            modelBuilder.Entity("Coravel.Pro.EntityFramework.CoravelScheduledJobHistory", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.SerialColumn);
+
+                    b.Property<string>("DisplayName")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime?>("EndedAt")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("ErrorMessage")
+                        .HasColumnType("text");
+
+                    b.Property<bool>("Failed")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("StackTrace")
+                        .HasColumnType("text");
+
+                    b.Property<string>("TypeFullPath")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Coravel_ScheduledJobHistory");
+                });
 
             modelBuilder.Entity("DGMLD3.Data.RDMS.ApplicationUser", b =>
                 {
@@ -37,8 +138,8 @@ namespace DGMLD3.Migrations
                         .HasColumnType("timestamp without time zone");
 
                     b.Property<string>("Email")
-                        .HasMaxLength(256)
-                        .HasColumnType("character varying(256)");
+                        .HasColumnType("character varying(256)")
+                        .HasMaxLength(256);
 
                     b.Property<bool>("EmailConfirmed")
                         .HasColumnType("boolean");
@@ -56,12 +157,12 @@ namespace DGMLD3.Migrations
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("NormalizedEmail")
-                        .HasMaxLength(256)
-                        .HasColumnType("character varying(256)");
+                        .HasColumnType("character varying(256)")
+                        .HasMaxLength(256);
 
                     b.Property<string>("NormalizedUserName")
-                        .HasMaxLength(256)
-                        .HasColumnType("character varying(256)");
+                        .HasColumnType("character varying(256)")
+                        .HasMaxLength(256);
 
                     b.Property<string>("PasswordHash")
                         .HasColumnType("text");
@@ -82,17 +183,17 @@ namespace DGMLD3.Migrations
                         .HasColumnType("boolean");
 
                     b.Property<string>("UserName")
-                        .HasMaxLength(256)
-                        .HasColumnType("character varying(256)");
+                        .HasColumnType("character varying(256)")
+                        .HasMaxLength(256);
 
                     b.HasKey("Id");
 
                     b.HasIndex("NormalizedEmail")
-                        .HasDatabaseName("EmailIndex");
+                        .HasName("EmailIndex");
 
                     b.HasIndex("NormalizedUserName")
                         .IsUnique()
-                        .HasDatabaseName("UserNameIndex");
+                        .HasName("UserNameIndex");
 
                     b.HasIndex("PlanId");
 
@@ -104,7 +205,7 @@ namespace DGMLD3.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer")
-                        .UseSerialColumn();
+                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.SerialColumn);
 
                     b.Property<string>("CreatorId")
                         .HasColumnType("text");
@@ -148,7 +249,7 @@ namespace DGMLD3.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer")
-                        .UseSerialColumn();
+                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.SerialColumn);
 
                     b.Property<string>("BillingPer")
                         .HasColumnType("text");
@@ -180,18 +281,18 @@ namespace DGMLD3.Migrations
                         .HasColumnType("text");
 
                     b.Property<string>("Name")
-                        .HasMaxLength(256)
-                        .HasColumnType("character varying(256)");
+                        .HasColumnType("character varying(256)")
+                        .HasMaxLength(256);
 
                     b.Property<string>("NormalizedName")
-                        .HasMaxLength(256)
-                        .HasColumnType("character varying(256)");
+                        .HasColumnType("character varying(256)")
+                        .HasMaxLength(256);
 
                     b.HasKey("Id");
 
                     b.HasIndex("NormalizedName")
                         .IsUnique()
-                        .HasDatabaseName("RoleNameIndex");
+                        .HasName("RoleNameIndex");
 
                     b.ToTable("AspNetRoles");
                 });
@@ -201,7 +302,7 @@ namespace DGMLD3.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer")
-                        .UseSerialColumn();
+                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.SerialColumn);
 
                     b.Property<string>("ClaimType")
                         .HasColumnType("text");
@@ -225,7 +326,7 @@ namespace DGMLD3.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer")
-                        .UseSerialColumn();
+                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.SerialColumn);
 
                     b.Property<string>("ClaimType")
                         .HasColumnType("text");
@@ -305,8 +406,6 @@ namespace DGMLD3.Migrations
                     b.HasOne("DGMLD3.Data.RDMS.PricePlan", "Plan")
                         .WithMany("Users")
                         .HasForeignKey("PlanId");
-
-                    b.Navigation("Plan");
                 });
 
             modelBuilder.Entity("DGMLD3.Data.RDMS.Graph", b =>
@@ -314,8 +413,6 @@ namespace DGMLD3.Migrations
                     b.HasOne("DGMLD3.Data.RDMS.ApplicationUser", "Creator")
                         .WithMany("Graphs")
                         .HasForeignKey("CreatorId");
-
-                    b.Navigation("Creator");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -367,16 +464,6 @@ namespace DGMLD3.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("DGMLD3.Data.RDMS.ApplicationUser", b =>
-                {
-                    b.Navigation("Graphs");
-                });
-
-            modelBuilder.Entity("DGMLD3.Data.RDMS.PricePlan", b =>
-                {
-                    b.Navigation("Users");
                 });
 #pragma warning restore 612, 618
         }
