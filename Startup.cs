@@ -34,7 +34,7 @@ namespace DGMLD3
         {
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseNpgsql(
-                    Secrets.GetConnectionString(Configuration, "DefaultConnectionDB"), options => options.SetPostgresVersion(9,6)));
+                    Secrets.GetConnectionString(Configuration, "DefaultConnectionDB"), options => options.SetPostgresVersion(13,2)));
             
             services.AddIdentity<ApplicationUser, IdentityRole>(options => options.SignIn.RequireConfirmedAccount = true)
                 .AddDefaultTokenProviders()
